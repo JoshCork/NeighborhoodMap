@@ -37,10 +37,7 @@
         <div class="jumbotron">
             <h1>I just want to be a big map!</h1>
             <p class="lead">A cool way to explore a new neighborhood.</p>
-            <div id="floating-panel">
-                <input id="address" type="textbox" value="Sydney, NSW">
-                <input id="submit" type="button" value="Geocode">
-            </div>
+            <input id="pac-input" class="controls" type="text" placeholder="Search Box">
             <div id="map"></div>
         </div>
         <div class="row marketing">
@@ -60,85 +57,70 @@
         </div>
     </div>
     <script>
-    // If you're adding a number of markers, you may want to drop them on the map
-    // consecutively rather than all at once. This example shows how to use
-    // window.setTimeout() to space your markers' animation.
+    // This example requires the Places library. Include the libraries=places
+    // parameter when you first load the API. For example:
+    // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
 
-    var neighborhoods = [{
-        lat: 52.511,
-        lng: 13.447
-    }, {
-        lat: 52.549,
-        lng: 13.422
-    }, {
-        lat: 52.497,
-        lng: 13.396
-    }, {
-        lat: 52.517,
-        lng: 13.394
-    }];
-
-    var markers = [];
     var map;
+    var infowindow;
+    var myPlaces = [];
 
     function initMap() {
+        var theGroves = {
+            lat: 33.3539759,
+            lng: -111.7152599
+        };
+
         map = new google.maps.Map(document.getElementById('map'), {
-            zoom: 12,
-            center: {
-                lat: 52.520,
-                lng: 13.410
-            }
+            center: theGroves,
+            zoom: 15
         });
-        var geocoder = new google.maps.Geocoder();
 
-        document.getElementById('submit').addEventListener('click', function() {
-          geocodeAddress(geocoder, map);
-          drop();
-        });
+        infowindow = new google.maps.InfoWindow();
+        var service = new google.maps.places.PlacesService(map);
+        service.nearbySearch({
+            location: theGroves,
+            radius: 500,
+            type: ['store', 'restaurant', 'school']
+        }, callback);
+
     }
 
-    function drop() {
-        clearMarkers();
-        for (var i = 0; i < neighborhoods.length; i++) {
-            addMarkerWithTimeout(neighborhoods[i], i * 200);
+    function callback(results, status) {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+            for (var i = 0; i < results.length; i++) {
+                createMarker(results[i]);
+
+            }
         }
     }
 
-    function addMarkerWithTimeout(position, timeout) {
-        window.setTimeout(function() {
-            markers.push(new google.maps.Marker({
-                position: position,
-                map: map,
-                animation: google.maps.Animation.DROP
-            }));
-        }, timeout);
-    }
+    function createMarker(place) {
+        myPlaces.push(place);
+        var placeLoc = place.geometry.location;
+        var icon = {
+            url: place.icon,
+            size: new google.maps.Size(71, 71),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(17, 34),
+            scaledSize: new google.maps.Size(25, 25)
+        };
+        var marker = new google.maps.Marker({
+            map: map,
+            icon: icon,
+            position: place.geometry.location
+        });
 
-    function clearMarkers() {
-        for (var i = 0; i < markers.length; i++) {
-            markers[i].setMap(null);
-        }
-        markers = [];
-    }
-
-    function geocodeAddress(geocoder, resultsMap) {
-        var address = document.getElementById('address').value;
-        geocoder.geocode({
-            'address': address
-        }, function(results, status) {
-            if (status === google.maps.GeocoderStatus.OK) {
-                resultsMap.setCenter(results[0].geometry.location);
-                var marker = new google.maps.Marker({
-                    map: resultsMap,
-                    position: results[0].geometry.location
-                });
-            } else {
-                alert('Geocode was not successful for the following reason: ' + status);
-            }
+        google.maps.event.addListener(marker, 'click', function() {
+            infowindow.setContent(place.name);
+            infowindow.open(map, this);
         });
     }
+
+    console.log(myPlaces);
+
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDL08JkuDrMQXtF1N3ZRoH32V-4yeOoQzA&callback=initMap" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDL08JkuDrMQXtF1N3ZRoH32V-4yeOoQzA&libraries=places&callback=initMap" async defer></script>
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
     <script>
     (function(b, o, i, l, e, r) {
