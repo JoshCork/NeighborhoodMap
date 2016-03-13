@@ -64,6 +64,7 @@
     var map;
     var infowindow;
     var myPlaces = [];
+    var myDetails = [];
 
     function initMap() {
         var theGroves = {
@@ -84,19 +85,38 @@
             type: ['store', 'restaurant', 'school']
         }, callback);
 
+
+
+
+    }
+
+    function detailCallback(place, status) {
+        if (status == google.maps.places.PlacesServiceStatus.OK) {
+            myDetails.push(place);
+            console.log('detailName: ' + myDetails[myDetails.length - 1].name);
+        }
     }
 
     function callback(results, status) {
+        var detailService = new google.maps.places.PlacesService(map);
         if (status === google.maps.places.PlacesServiceStatus.OK) {
             for (var i = 0; i < results.length; i++) {
+                myPlaces.push(results[i]);
                 createMarker(results[i]);
+                detailService.getDetails({placeId: results[i].place_id}, detailCallback);
+                console.log('PlaceName: ' + myPlaces[i].name);
 
             }
+            console.log(myPlaces.length);
+            console.log(myDetails.length)
+
+        } else {
+            console.log('place service status not ok');
         }
     }
 
     function createMarker(place) {
-        myPlaces.push(place);
+
         var placeLoc = place.geometry.location;
         var icon = {
             url: place.icon,
@@ -116,9 +136,6 @@
             infowindow.open(map, this);
         });
     }
-
-    console.log(myPlaces);
-
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDL08JkuDrMQXtF1N3ZRoH32V-4yeOoQzA&libraries=places&callback=initMap" async defer></script>
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
