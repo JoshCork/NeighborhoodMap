@@ -56,88 +56,7 @@
             <p>♥ from the Yeoman team</p>
         </div>
     </div>
-    <script>
-    // This example requires the Places library. Include the libraries=places
-    // parameter when you first load the API. For example:
-    // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
 
-    var map;
-    var infowindow;
-    var myPlaces = [];
-    var myDetails = [];
-
-    function initMap() {
-        var theGroves = {
-            lat: 33.3539759,
-            lng: -111.7152599
-        };
-
-        map = new google.maps.Map(document.getElementById('map'), {
-            center: theGroves,
-            zoom: 15
-        });
-
-        infowindow = new google.maps.InfoWindow();
-        var service = new google.maps.places.PlacesService(map);
-        service.nearbySearch({
-            location: theGroves,
-            radius: 500,
-            type: ['store', 'restaurant', 'school']
-        }, callback);
-
-
-
-
-    }
-
-    function detailCallback(place, status) {
-        if (status == google.maps.places.PlacesServiceStatus.OK) {
-            myDetails.push(place);
-            console.log('detailName: ' + myDetails[myDetails.length - 1].name);
-        }
-    }
-
-    function callback(results, status) {
-        var detailService = new google.maps.places.PlacesService(map);
-        if (status === google.maps.places.PlacesServiceStatus.OK) {
-            for (var i = 0; i < results.length; i++) {
-                myPlaces.push(results[i]);
-                createMarker(results[i]);
-                detailService.getDetails({placeId: results[i].place_id}, detailCallback);
-                console.log('PlaceName: ' + myPlaces[i].name);
-
-            }
-            console.log(myPlaces.length);
-            console.log(myDetails.length)
-
-        } else {
-            console.log('place service status not ok');
-        }
-    }
-
-    function createMarker(place) {
-
-        var placeLoc = place.geometry.location;
-        var icon = {
-            url: place.icon,
-            size: new google.maps.Size(71, 71),
-            origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(17, 34),
-            scaledSize: new google.maps.Size(25, 25)
-        };
-        var marker = new google.maps.Marker({
-            map: map,
-            icon: icon,
-            position: place.geometry.location
-        });
-
-        google.maps.event.addListener(marker, 'click', function() {
-            infowindow.setContent(place.name);
-            infowindow.open(map, this);
-        });
-    }
-    </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDL08JkuDrMQXtF1N3ZRoH32V-4yeOoQzA&libraries=places&callback=initMap" async defer></script>
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
     <script>
     (function(b, o, i, l, e, r) {
@@ -174,8 +93,9 @@
     <script src="/bower_components/bootstrap/js/collapse.js"></script>
     <script src="/bower_components/bootstrap/js/tab.js"></script>
     <!-- endbuild -->
-    <!-- build:js scripts/main.js -->
-    <script src="scripts/main.js"></script>
+    <!-- build:js scripts/myNearby.js -->
+    <script src="scripts/myNearby.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDL08JkuDrMQXtF1N3ZRoH32V-4yeOoQzA&libraries=places&callback=initMap" async defer></script>
     <!-- endbuild -->
 </body>
 
