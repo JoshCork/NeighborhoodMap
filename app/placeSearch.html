@@ -31,6 +31,7 @@
                 <li class="active"><a href="#">Home</a></li>
                 <li class="active"><a href="/placeSearch.html">Place Search</a></li>
                 <li class="active"><a href="/nearbySearch.html">Nearby Search</a></li>
+                <li class="active"><a href="/comboSearch.html">Combo Search</a></li>
             </ul>
             <h3 class="text-muted">NeighborhoodMap</h3>
         </div>
@@ -67,6 +68,8 @@
             mapTypeId: google.maps.MapTypeId.ROADMAP
         });
 
+        myPlaces = new google.maps.places.PlacesService(map);
+
         // Create the search box and link it to the UI element.
         var input = document.getElementById('pac-input');
         var searchBox = new google.maps.places.SearchBox(input);
@@ -81,6 +84,7 @@
         // Listen for the event fired when the user selects a prediction and retrieve
         // more details for that place.
         searchBox.addListener('places_changed', function() {
+            search();
             var places = searchBox.getPlaces();
 
             if (places.length == 0) {
@@ -121,6 +125,54 @@
             });
             map.fitBounds(bounds);
         });
+
+        // Search for things within the viewport of the map.
+        function search() {
+            var search = {
+                bounds: map.getBounds(),
+                radius: 500,
+                type: ['store', 'restaurant', 'school']
+            };
+            console.log("I HAVE BEEN CALLED");
+
+            myPlaces.nearbySearch(search, callback);
+
+            function callback(results, status) {
+
+                console.log("inside callback function");
+
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    for (var i = 0; i < results.length; i++) {
+                        createMarker(results[i]);
+                    }
+
+                } else {
+                    console.log('place service status not ok');
+                }
+            }
+
+            function createMarker(place) {
+                var placeLoc = place.geometry.location;
+                var icon = {
+                    url: place.icon,
+                    size: new google.maps.Size(71, 71),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(17, 34),
+                    scaledSize: new google.maps.Size(25, 25)
+                };
+                var marker = new google.maps.Marker({
+                    map: map,
+                    icon: icon,
+                    position: place.geometry.location
+                });
+
+                google.maps.event.addListener(marker, 'click', function() {
+                    infowindow.setContent(place.name);
+                    infowindow.open(map, this);
+                });
+            }
+
+        }
     }
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDL08JkuDrMQXtF1N3ZRoH32V-4yeOoQzA&libraries=places&callback=initAutocomplete" async defer></script>

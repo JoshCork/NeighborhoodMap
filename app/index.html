@@ -31,6 +31,7 @@
                 <li class="active"><a href="#">Home</a></li>
                 <li class="active"><a href="/placeSearch.html">Place Search</a></li>
                 <li class="active"><a href="/nearbySearch.html">Nearby Search</a></li>
+                <li class="active"><a href="/comboSearch.html">Combo Search</a></li>
             </ul>
             <h3 class="text-muted">NeighborhoodMap</h3>
         </div>
@@ -45,6 +46,37 @@
         </div>
         <div class="row marketing">
             <div class="col-lg-6">
+                <div id="listing">
+                    <table id="resultsTable">
+                        <tbody id="results"></tbody>
+                    </table>
+                </div>
+                <div style="display: none">
+                    <div id="info-content">
+                        <table>
+                            <tr id="iw-url-row" class="iw_table_row">
+                                <td id="iw-icon" class="iw_table_icon"></td>
+                                <td id="iw-url"></td>
+                            </tr>
+                            <tr id="iw-address-row" class="iw_table_row">
+                                <td class="iw_attribute_name">Address:</td>
+                                <td id="iw-address"></td>
+                            </tr>
+                            <tr id="iw-phone-row" class="iw_table_row">
+                                <td class="iw_attribute_name">Telephone:</td>
+                                <td id="iw-phone"></td>
+                            </tr>
+                            <tr id="iw-rating-row" class="iw_table_row">
+                                <td class="iw_attribute_name">Rating:</td>
+                                <td id="iw-rating"></td>
+                            </tr>
+                            <tr id="iw-website-row" class="iw_table_row">
+                                <td class="iw_attribute_name">Website:</td>
+                                <td id="iw-website"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
                 <h4>Wikipedia Information</h4>
                 <p>Going to have some kickass Wikipedia information based on their API by locaiton that gets passed in.</p>
                 <h4>Entertainment Nearby</h4>
@@ -92,8 +124,8 @@
         var geocoder = new google.maps.Geocoder();
 
         document.getElementById('submit').addEventListener('click', function() {
-          geocodeAddress(geocoder, map);
-          drop();
+            geocodeAddress(geocoder, map);
+            drop();
         });
     }
 
