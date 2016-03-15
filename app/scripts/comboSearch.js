@@ -13,6 +13,8 @@ var autocomplete;
 var countryRestrict = { 'country': 'us' };
 var MARKER_PATH = 'https://maps.gstatic.com/intl/en_us/mapfiles/marker_green';
 var hostnameRegexp = new RegExp('^https?://.+?/');
+var myPlaces = [];
+var myBaseLocation = [];
 
 // // Create the search box and link it to the UI element.
 // var input = document.getElementById('autocomplete');
@@ -46,11 +48,8 @@ function initMap() {
         });
     places = new google.maps.places.PlacesService(map);
 
-    autocomplete.addListener('place_changed', onPlaceChanged);
+    autocomplete.addListener('place_changed', onPlaceChanged);1!
 
-    // Add a DOM event listener to react when the user selects a country.
-    document.getElementById('country').addEventListener(
-        'change', setAutocompleteCountry);
 }
 
 // When the user selects a city, get the place details for the city and
@@ -61,6 +60,7 @@ function onPlaceChanged() {
         map.panTo(place.geometry.location);
         map.setZoom(15);
         search();
+        myBaseLocation = place; console.log(myBaseLocation);
     } else {
         document.getElementById('autocomplete').placeholder = 'Enter a city';
     }
@@ -70,7 +70,7 @@ function onPlaceChanged() {
 function search() {
     var search = {
         bounds: map.getBounds(),
-        types: ['school', 'store', 'Food'],
+        types: ['school', 'store', 'food'],
         radius: 1000
     };
 
@@ -89,7 +89,7 @@ function search() {
                     animation: google.maps.Animation.DROP,
                     icon: markerIcon
                 });
-                // If the user clicks a hotel marker, show the details of that hotel
+                // If the user clicks a place marker, show the details of that place
                 // in an info window.
                 markers[i].placeResult = results[i];
                 google.maps.event.addListener(markers[i], 'click', showInfoWindow);
@@ -136,6 +136,7 @@ function addResult(result, i) {
     var results = document.getElementById('results');
     var markerLetter = String.fromCharCode('A'.charCodeAt(0) + i);
     var markerIcon = MARKER_PATH + markerLetter + '.png';
+    myPlaces.push(result);
 
     var tr = document.createElement('tr');
     tr.style.backgroundColor = (i % 2 === 0 ? '#F0F0F0' : '#FFFFFF');
@@ -162,6 +163,7 @@ function clearResults() {
     while (results.childNodes[0]) {
         results.removeChild(results.childNodes[0]);
     }
+    myPlaces = [];
 }
 
 // Get the place details for a hotel. Show the information in an info window,
