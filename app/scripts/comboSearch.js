@@ -48,7 +48,7 @@ function initMap() {
         });
     places = new google.maps.places.PlacesService(map);
 
-    autocomplete.addListener('place_changed', onPlaceChanged);1!
+    autocomplete.addListener('place_changed', onPlaceChanged);
 
 }
 
