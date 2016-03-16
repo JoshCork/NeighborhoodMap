@@ -38,7 +38,6 @@
         <div class="jumbotron">
             <h1>I just want to be a big map!</h1>
             <p class="lead">A cool way to explore a new neighborhood.</p>
-
             <div id="locationField">
                 <!-- <input id="autocomplete" placeholder="Enter a city" type="text" /> -->
                 <input id="autocomplete" class="controls" type="text" placeholder="Search Box">
@@ -80,7 +79,10 @@
                         </table>
                     </div>
                 </div>
-                <h4>Wikipedia Information</h4>
+                <div class="wikipedia-container">
+                    <h4 id="wikipedia-header">Wikipedia Pages about Nearby locations</h4>
+                    <ul id="wikipedia-links">Type in an address above and find relevant Wikipedia articles here!</ul>
+                </div>
                 <p>Going to have some kickass Wikipedia information based on their API by locaiton that gets passed in.</p>
                 <h4>Entertainment Nearby</h4>
                 <p>Going to use the yelp API to try to surface some interseting stuff nearby.</p>
@@ -94,11 +96,8 @@
             <p>♥ from the Yeoman team</p>
         </div>
     </div>
-
     <script src="scripts/comboSearch.js"></script>
-
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDL08JkuDrMQXtF1N3ZRoH32V-4yeOoQzA&libraries=places&callback=initMap"
-        async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDL08JkuDrMQXtF1N3ZRoH32V-4yeOoQzA&libraries=places&callback=initMap" async defer></script>
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
     <script>
     (function(b, o, i, l, e, r) {

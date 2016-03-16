@@ -26,11 +26,11 @@ var myBaseLocation = [];
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
         center: {
-                    lat: 33.3539759,
-                    lng: -111.7152599
-                },
-                zoom: 13,
-                mapTypeId: google.maps.MapTypeId.ROADMAP
+            lat: 33.3539759,
+            lng: -111.7152599
+        },
+        zoom: 13,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
 
     });
 
@@ -60,7 +60,9 @@ function onPlaceChanged() {
         map.panTo(place.geometry.location);
         map.setZoom(15);
         search();
-        myBaseLocation = place; console.log(myBaseLocation);
+        myBaseLocation = place;
+        getWikipediaNearby(place);
+        console.log(myBaseLocation);
     } else {
         document.getElementById('autocomplete').placeholder = 'Enter a city';
     }
@@ -228,4 +230,43 @@ function buildIWContent(place) {
     } else {
         document.getElementById('iw-website-row').style.display = 'none';
     }
+}
+
+function getWikipediaNearby(thePlace) {
+
+    var wpUrl = "http://en.wikipedia.org/w/api.php?action=query&list=geosearch&gsradius=10000&gscoord=" + thePlace.geometry.location.lat() + "%7C" + thePlace.geometry.location.lng() + "&format=json";
+    var wikiRequestTimeout = setTimeout(function() {
+        $wikiElem.text("failed to get Wikipedia resources.");
+    }, 8000);
+
+    $.ajax({
+        url: wpUrl,
+        crossDomain: true,
+        dataType: "jsonp",
+        success: function(jsonpData) {
+            var wikiItems = [];
+            var resultsBaseUrl = "http://en.wikipedia.org/wiki/";
+            console.log("Wikipedia Results: " + jsonpData);
+            console.log("title of first result: " + jsonpData.query.geosearch[0].title);
+            $.each(jsonpData.query.geosearch, function(key, val) {
+                // wikiItems.push(this.title);
+                wikiItems.push("<li class='article' id='" + key + "'><a href='" + resultsBaseUrl + this.title + "' target='_blank'>" + this.title + "</a></li>");
+                console.log("i have pushed to WikiArray");
+            });
+            console.log("Wiki each has completed");
+            clearTimeout(wikiRequestTimeout);
+
+            console.log(wikiItems);
+            $("<ul/>", {
+                "id": "wikipedia-links",
+                html: wikiItems.join("")
+            }).appendTo(".wikipedia-container");
+
+        },
+        error: function(e) {
+            console.log("I am the error: " + e);
+        }
+    });
+
+
 }
