@@ -1,25 +1,26 @@
 // myNYT key: 3cc303338d57062cab3b82000286ca48:2:71622028 - article search
 // myNYT geo Key: d9d00c130383e3546b7c1df6f3b715c1:11:71622028
 // my GoogleMaps API Key: AIzaSyCo7SZK2iqRwqZACNN9kP8ssQbpUhKQvXM
+// flickr
 
 
 function loadData() {
 
     var $body = $('body');
     var $wikiElem = $('#wikipedia-links');
-    var $nytHeaderElem = $('#nytimes-header');
-    var $nytElem = $('#nytimes-articles');
-    var $greeting = $('#greeting');
+    // var $nytHeaderElem = $('#nytimes-header');
+    // var $nytElem = $('#nytimes-articles');
+    // var $greeting = $('#greeting');
 
     // clear out old data before new request
     $wikiElem.text("");
     $nytElem.text("");
 
-    var streetStr = $('#street').val();
-    var cityStr = $('#city').val();
-    var address = streetStr + ', ' + cityStr;
+    // var streetStr = $('#street').val();
+    // var cityStr = $('#city').val();
+    // var address = streetStr + ', ' + cityStr;
 
-    $greeting.text('So, you want to live at ' + address + '?');
+    // $greeting.text('So, you want to live at ' + address + '?');
 
 
     // load streetview
@@ -31,30 +32,30 @@ function loadData() {
 
     //"http://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=3cc303338d57062cab3b82000286ca48:2:71622028&fq=glocation:('Arizona')
     ////http://api.nytimes.com/svc/search/v2/articlesearch.json?fq=glocation%3A%28%27Arizona%27%29&api-key=3cc303338d57062cab3b82000286ca48%253A2%253A71622028
-    $nytHeaderElem.text('New York Times Articles About ' + cityStr);
+    // $nytHeaderElem.text('New York Times Articles About ' + cityStr);
 
-    var myArticleApiKey = "3cc303338d57062cab3b82000286ca48:2:71622028";
-    var filterQuery = "-headline:('Paid Notice' 'obituary')";
-    var nytimesUrl = "http://api.nytimes.com/svc/search/v2/articlesearch.json?q=" + cityStr + "&begin_date=20150101" + "&fq=" + filterQuery + "&sort=newest&api-key=" + myArticleApiKey;
+    // var myArticleApiKey = "3cc303338d57062cab3b82000286ca48:2:71622028";
+    // var filterQuery = "-headline:('Paid Notice' 'obituary')";
+    // var nytimesUrl = "http://api.nytimes.com/svc/search/v2/articlesearch.json?q=" + cityStr + "&begin_date=20150101" + "&fq=" + filterQuery + "&sort=newest&api-key=" + myArticleApiKey;
 
-    $.getJSON(nytimesUrl, function(data) {
-        var items = [];
-        $.each(data.response.docs, function(key, val) {
-            items.push("<li class='article' id='" + key + "'><a href='" + this.web_url + "' target='_blank'>" + this.headline.main + "</a>" + "<p>" + this.snippet + "</p>" + "</li>");
+    // $.getJSON(nytimesUrl, function(data) {
+    //     var items = [];
+    //     $.each(data.response.docs, function(key, val) {
+    //         items.push("<li class='article' id='" + key + "'><a href='" + this.web_url + "' target='_blank'>" + this.headline.main + "</a>" + "<p>" + this.snippet + "</p>" + "</li>");
 
-        });
+    //     });
 
 
-        $("<ul/>", {
-            "class": "article-list",
-            "id": "nyt-articles",
-            html: items.join("")
-        }).appendTo(".nytimes-container");
+    //     $("<ul/>", {
+    //         "class": "article-list",
+    //         "id": "nyt-articles",
+    //         html: items.join("")
+    //     }).appendTo(".nytimes-container");
 
-    }).error(function(e) {
-        $nytHeaderElem.text('New York Times Articles: Booo. Could not retrieve articles.');
-        console.log("your error was: " + JSON.stringify(e));
-    });
+    // }).error(function(e) {
+    //     $nytHeaderElem.text('New York Times Articles: Booo. Could not retrieve articles.');
+    //     console.log("your error was: " + JSON.stringify(e));
+    // });
 
     var geocodeUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=";
     var geocodeKey = "AIzaSyCo7SZK2iqRwqZACNN9kP8ssQbpUhKQvXM";
@@ -65,9 +66,9 @@ function loadData() {
         var Latitude = data.results[0].geometry.location.lat;
 
         var wpUrl = "http://en.wikipedia.org/w/api.php?action=query&list=geosearch&gsradius=10000&gscoord=" + Latitude + "%7C" + Longitude + "&format=json";
-        var wikiRequestTimeout = setTimeout(function(){
+        var wikiRequestTimeout = setTimeout(function() {
             $wikiElem.text("failed to get Wikipedia resources.");
-        },8000);
+        }, 8000);
 
         $.ajax({
             url: wpUrl,

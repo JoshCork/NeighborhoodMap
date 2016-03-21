@@ -10,11 +10,13 @@
 var map, places, infoWindow;
 var markers = [];
 var autocomplete;
-var countryRestrict = { 'country': 'us' };
+var $wikiElem = $("#wikipedia-links");
 var MARKER_PATH = 'https://maps.gstatic.com/intl/en_us/mapfiles/marker_green';
+var flickrKey = '6c50d3c0a8cd35d228fd25d74f2f663c'
+
 var hostnameRegexp = new RegExp('^https?://.+?/');
 var myPlaces = [];
-var myBaseLocation = [];
+
 
 // // Create the search box and link it to the UI element.
 // var input = document.getElementById('autocomplete');
@@ -60,9 +62,8 @@ function onPlaceChanged() {
         map.panTo(place.geometry.location);
         map.setZoom(15);
         search();
-        myBaseLocation = place;
         getWikipediaNearby(place);
-        console.log(myBaseLocation);
+        getFlickrPhotos(place.geometry.location.lat(),place.geometry.location.lng());
     } else {
         document.getElementById('autocomplete').placeholder = 'Enter a city';
     }
@@ -166,6 +167,8 @@ function clearResults() {
         results.removeChild(results.childNodes[0]);
     }
     myPlaces = [];
+    $("ul").empty();
+    $("#images").empty();
 }
 
 // Get the place details for a hotel. Show the information in an info window,
@@ -253,10 +256,9 @@ function getWikipediaNearby(thePlace) {
                 wikiItems.push("<li class='article' id='" + key + "'><a href='" + resultsBaseUrl + this.title + "' target='_blank'>" + this.title + "</a></li>");
                 console.log("i have pushed to WikiArray");
             });
-            console.log("Wiki each has completed");
+
             clearTimeout(wikiRequestTimeout);
 
-            console.log(wikiItems);
             $("<ul/>", {
                 "id": "wikipedia-links",
                 html: wikiItems.join("")
@@ -267,6 +269,39 @@ function getWikipediaNearby(thePlace) {
             console.log("I am the error: " + e);
         }
     });
-
-
 }
+
+function getFlickrPhotos(pLat,pLon) {
+      var flickrSearchParameters
+      var flickrBaseUrl = 'https://www.flickr.com/services/rest/?method=flickr.photos.search&format=json'
+      var src;
+      var apiKey = '6c50d3c0a8cd35d228fd25d74f2f663c';
+      var safe_search = 1;
+      var sort = 'interestingness-desc';
+      var radius = 10;
+      var radius_units = 'mi';
+      var content_type = 1;
+      var perPage = 10;
+
+      var url = flickrBaseUrl
+        + '&api_key=' + apiKey
+        + '&safe_search=' + safe_search
+        + '&sort=' + sort
+        + '&lat=' + pLat
+        + '&lon=' + pLon
+        + '&radius=' + radius
+        + '&radius_units=' + radius_units
+        + '&content_type=' + content_type
+        + '&per_page=' +  perPage;
+
+      $.getJSON(url + "&format=json&jsoncallback=?", function(data) {
+        console.log("flickr photos are coming!");
+        console.log(data);
+          $.each(data.photos.photo, function(i, item) {
+              src = "http://farm" + item.farm + ".static.flickr.com/" + item.server + "/" + item.id + "_" + item.secret + "_m.jpg";
+              $("<img/>").attr("src", src).appendTo("#images");
+              if (i == 3) return false;
+          });
+      });
+
+  }
