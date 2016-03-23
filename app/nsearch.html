@@ -26,19 +26,25 @@
     <!--[if lt IE 10]>
       <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
-    <div class="container">
-        <div class="header">
-            <ul class="nav nav-pills pull-right">
-                <li class="active"><a href="#">Home</a></li>
-                <li class="active"><a href="/placeSearch.html">Place Search</a></li>
-                <li class="active"><a href="/nearbySearch.html">Nearby Search</a></li>
-                <li class="active"><a href="/comboSearch.html">Combo Search</a></li>
-            </ul>
-            <h3 class="text-muted">NeighborhoodMap</h3>
-        </div>
 
-            <h1>I just want to be a big map!</h1>
-            <p class="lead">A cool way to explore a new neighborhood.</p>
+
+    <nav class="navbar navbar-default navbar-static-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Neighborhood Maps</a>
+        </div>
+        <div id="navbar" >
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="jumbotron">
+        <div class="container">
             <div id="locationField">
                 <!-- <input id="autocomplete" placeholder="Enter a city" type="text" /> -->
                 <input id="autocomplete" class="controls" type="text" placeholder="Search Box">
@@ -46,9 +52,19 @@
             <div id="controls">
             </div>
             <div id="map"></div>
-
-        <div class="row marketing">
-            <div class="col-lg-6">
+        </div>
+    </div>
+    <div class="container">
+        <!-- Example row of columns -->
+        <div class="row">
+            <div class="col-md-4 wikipedia-container">
+                <h2 id="wikipedia-header">Wikipedia Info</h2>
+                <p>Search for a neighborhood above and find relevant Wikipedia articles here!</p>
+                <ul id="wikipedia-links"></ul>
+            </div>
+            <div class="col-md-4">
+                <h2>Drop pins</h2>
+                <p>Points of interest from your search are displayed here.</p>
                 <div id="listing">
                     <table id="resultsTable">
                         <tbody id="results"></tbody>
@@ -80,19 +96,15 @@
                         </table>
                     </div>
                 </div>
-                <div class="wikipedia-container">
-                    <h4 id="wikipedia-header">Wikipedia Pages about Nearby locations</h4>
-                    <ul id="wikipedia-links">Type in an address above and find relevant Wikipedia articles here!</ul>
-                </div>
-                <h4>images</h4>
-                <p>Going to use the yelp API to try to surface some interseting stuff nearby.</p>
+            </div>
+            <div class="col-md-4">
+                <h2>Flickr Photos</h2>
+                <p>Photos taken near your neighborhood search.</p>
                 <div id="images"></div>
-                <h4>Current Weather</h4>
-                <div id="weather"></div>
-                <h4>Housing Price Information</h4>
-                <p>I'd like to see if I can tap into Zillo or some other API for realestate information.</p>
             </div>
         </div>
+    </div>
+    <div class="container">
         <div class="footer">
             <p>♥ from the Yeoman team</p>
         </div>
