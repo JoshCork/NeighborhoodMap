@@ -50,6 +50,10 @@ function initMap() {
         });
     places = new google.maps.places.PlacesService(map);
 
+    // Create the search box and link it to the UI element.
+    var input = document.getElementById('autocomplete');
+    map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
     autocomplete.addListener('place_changed', onPlaceChanged);
 
 }
