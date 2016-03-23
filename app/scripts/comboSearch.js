@@ -63,7 +63,8 @@ function onPlaceChanged() {
         map.setZoom(15);
         search();
         getWikipediaNearby(place);
-        getFlickrPhotos(place.geometry.location.lat(),place.geometry.location.lng());
+        getFlickrPhotos(place.geometry.location.lat(), place.geometry.location.lng());
+        getWeather();
     } else {
         document.getElementById('autocomplete').placeholder = 'Enter a city';
     }
@@ -271,37 +272,54 @@ function getWikipediaNearby(thePlace) {
     });
 }
 
-function getFlickrPhotos(pLat,pLon) {
-      var flickrSearchParameters
-      var flickrBaseUrl = 'https://www.flickr.com/services/rest/?method=flickr.photos.search&format=json'
-      var src;
-      var apiKey = '6c50d3c0a8cd35d228fd25d74f2f663c';
-      var safe_search = 1;
-      var sort = 'interestingness-desc';
-      var radius = 10;
-      var radius_units = 'mi';
-      var content_type = 1;
-      var perPage = 10;
+function getFlickrPhotos(pLat, pLon) {
+    var flickrSearchParameters
+    var flickrBaseUrl = 'https://www.flickr.com/services/rest/?method=flickr.photos.search&format=json'
+    var src;
+    var apiKey = '6c50d3c0a8cd35d228fd25d74f2f663c';
+    var safe_search = 1;
+    var sort = 'interestingness-desc';
+    var radius = 10;
+    var radius_units = 'mi';
+    var content_type = 1;
+    var perPage = 10;
 
-      var url = flickrBaseUrl
-        + '&api_key=' + apiKey
-        + '&safe_search=' + safe_search
-        + '&sort=' + sort
-        + '&lat=' + pLat
-        + '&lon=' + pLon
-        + '&radius=' + radius
-        + '&radius_units=' + radius_units
-        + '&content_type=' + content_type
-        + '&per_page=' +  perPage;
+    var url = flickrBaseUrl + '&api_key=' + apiKey + '&safe_search=' + safe_search + '&sort=' + sort + '&lat=' + pLat + '&lon=' + pLon + '&radius=' + radius + '&radius_units=' + radius_units + '&content_type=' + content_type + '&per_page=' + perPage;
 
-      $.getJSON(url + "&format=json&jsoncallback=?", function(data) {
+    $.getJSON(url + "&format=json&jsoncallback=?", function(data) {
         console.log("flickr photos are coming!");
         console.log(data);
-          $.each(data.photos.photo, function(i, item) {
-              src = "http://farm" + item.farm + ".static.flickr.com/" + item.server + "/" + item.id + "_" + item.secret + "_m.jpg";
-              $("<img/>").attr("src", src).appendTo("#images");
-              if (i == 3) return false;
-          });
-      });
+        $.each(data.photos.photo, function(i, item) {
+            src = "http://farm" + item.farm + ".static.flickr.com/" + item.server + "/" + item.id + "_" + item.secret + "_m.jpg";
+            $("<img/>").attr("src", src).appendTo("#images");
+            if (i == 3) return false;
+        });
+    });
 
-  }
+}
+
+function getWeather() {
+
+    // v3.1.0
+    //Docs at http://simpleweatherjs.com
+    $(document).ready(function() {
+        $.simpleWeather({
+            location: 'Austin, TX',
+            woeid: '',
+            unit: 'f',
+            success: function(weather) {
+                html = '<h2><i class="icon-' + weather.code + '"></i> ' + weather.temp + '&deg;' + weather.units.temp + '</h2>';
+                html += '<ul><li>' + weather.city + ', ' + weather.region + '</li>';
+                html += '<li class="currently">' + weather.currently + '</li>';
+                html += '<li>' + weather.wind.direction + ' ' + weather.wind.speed + ' ' + weather.units.speed + '</li></ul>';
+
+                $("#weather").html(html);
+            },
+            error: function(error) {
+                $("#weather").html('<p>' + error + '</p>');
+            }
+        });
+    });
+
+
+}

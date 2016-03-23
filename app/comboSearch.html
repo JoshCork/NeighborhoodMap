@@ -15,6 +15,7 @@
     <!-- endbuild -->
     <!-- build:css styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/weather.css">
     <!-- endbuild -->
     <!-- build:js scripts/vendor/modernizr.js -->
     <script src="/bower_components/modernizr/modernizr.js"></script>
@@ -35,7 +36,7 @@
             </ul>
             <h3 class="text-muted">NeighborhoodMap</h3>
         </div>
-        <div class="jumbotron">
+
             <h1>I just want to be a big map!</h1>
             <p class="lead">A cool way to explore a new neighborhood.</p>
             <div id="locationField">
@@ -45,7 +46,7 @@
             <div id="controls">
             </div>
             <div id="map"></div>
-        </div>
+
         <div class="row marketing">
             <div class="col-lg-6">
                 <div id="listing">
@@ -86,8 +87,8 @@
                 <h4>images</h4>
                 <p>Going to use the yelp API to try to surface some interseting stuff nearby.</p>
                 <div id="images"></div>
-                <h4>Restaurants Nearby</h4>
-                <p>Thinkin about using the yelp API to show nearby restaurants and interesting informaiton about them.</p>
+                <h4>Current Weather</h4>
+                <div id="weather"></div>
                 <h4>Housing Price Information</h4>
                 <p>I'd like to see if I can tap into Zillo or some other API for realestate information.</p>
             </div>
@@ -96,7 +97,6 @@
             <p>♥ from the Yeoman team</p>
         </div>
     </div>
-
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
     <script>
     (function(b, o, i, l, e, r) {
@@ -117,7 +117,7 @@
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
     <script src="/bower_components/jquery/dist/jquery.js"></script>
-    <script src="/bower_components/abdmob/x2js/xml2json.js"></script>
+    <script src="/bower_components/simpleWeather/jquery.simpleWeather.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:js scripts/plugins.js -->
