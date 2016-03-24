@@ -8,6 +8,7 @@ All the basic features are now working and I can now deploy via Gulp using 'Gulp
 - Wikipedia links are currently not working right if there is a space in the name
 - Sometimes the search doesn't provide Wikipedia info or Flickr photos until the second time you search for it. 
 - For some reason after searching the rest of the menu options at the top go away (about us, contact us, etc..). 
+- Weather is not working properly or incorporated correctly. 
 
 ## 3/23/2016
 Trying to deploy to gh-pages is easy once I get the project to build.  Need to pick up tomorrow getting gulp to build the project w/out errors and create the distribution.  Right now there are errors with jquery. 
