@@ -40,7 +40,7 @@ body {
 }
 
 i {
-  color: #fff;
+  color: #000;
   font-family: weather;
   font-size: 150px;
   font-weight: normal;
@@ -100,7 +100,7 @@ i {
 
 #weather h2 {
   margin: 0 0 8px;
-  color: #fff;
+  color: #000;
   font-size: 100px;
   font-weight: 300;
   text-align: center;
@@ -113,7 +113,7 @@ i {
 }
 
 #weather li {
-  background: #fff;
+  background: #000;
   background: rgba(255,255,255,0.90);
   padding: 20px;
   display: inline-block;

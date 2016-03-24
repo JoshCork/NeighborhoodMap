@@ -192,16 +192,13 @@ function showInfoWindow() {
 
 // Load the place information into the HTML elements used by the info window.
 function buildIWContent(place) {
-    document.getElementById('iw-icon').innerHTML = '<img class='hotelIcon' ' +
-        'src='' + place.icon + ''/>';
-    document.getElementById('iw-url').innerHTML = '<b><a href='' + place.url +
-        ''>' + place.name + '</a></b>';
+    document.getElementById('iw-icon').innerHTML = '<img class="hotelIcon"' + 'src=' + place.icon + '/>';
+    document.getElementById('iw-url').innerHTML = '<b><a href=' + place.url + '>' + place.name + '</a></b>';
     document.getElementById('iw-address').textContent = place.vicinity;
 
     if (place.formatted_phone_number) {
         document.getElementById('iw-phone-row').style.display = '';
-        document.getElementById('iw-phone').textContent =
-            place.formatted_phone_number;
+        document.getElementById('iw-phone').textContent = place.formatted_phone_number;
     } else {
         document.getElementById('iw-phone-row').style.display = 'none';
     }
@@ -258,7 +255,7 @@ function getWikipediaNearby(thePlace) {
             console.log('title of first result: ' + jsonpData.query.geosearch[0].title);
             $.each(jsonpData.query.geosearch, function(key, val) {
                 // wikiItems.push(this.title);
-                wikiItems.push('<li class='article' id='' + key + ''><a href='' + resultsBaseUrl + this.title + '' target='_blank'>' + this.title + '</a></li>');
+                wikiItems.push('<li class="article" id=""' + key + '><a href=' + resultsBaseUrl + this.title + ' target="_blank">' + this.title + '</a></li>');
                 console.log('i have pushed to WikiArray');
             });
 
@@ -312,15 +309,15 @@ function getWeather() {
             woeid: '',
             unit: 'f',
             success: function(weather) {
-                html = '<h2><i class='icon-' + weather.code + ''></i> ' + weather.temp + '&deg;' + weather.units.temp + '</h2>';
+                var html = '<h2><i class="icon-' + weather.code + '"></i> ' + weather.temp + '&deg;' + weather.units.temp + '</h2>';
                 html += '<ul><li>' + weather.city + ', ' + weather.region + '</li>';
-                html += '<li class='currently'>' + weather.currently + '</li>';
+                html += '<li class="currently">' + weather.currently + '</li>';
                 html += '<li>' + weather.wind.direction + ' ' + weather.wind.speed + ' ' + weather.units.speed + '</li></ul>';
 
-                $('#weather').html(html);
+                $("#weather").html(html);
             },
             error: function(error) {
-                $('#weather').html('<p>' + error + '</p>');
+                $("#weather").html('<p>' + error + '</p>');
             }
         });
     });
