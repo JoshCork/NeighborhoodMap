@@ -3,7 +3,10 @@ You will develop a single-page application featuring a map of your neighborhood 
 
 
 ## 3/23/2016
+Trying to deploy to gh-pages is easy once I get the project to build.  Need to pick up tomorrow getting gulp to build the project w/out errors and create the distribution.  Right now there are errors with jquery. 
+
 Updated the look and feel.  Added in a new library for pulling weather but need to add that to the UI next.  Created a gh-pages branch but it doesn't seem to be working for some reason.  Need to pick up here tomorrow getting the weather component ui element working and displayed where I want it.  Other thigns I may want to do is to pull the first paragraph from Wikipedia for a location and place that somewhere.   
+
 
 ## 3/22/2016
 Explored a bunch of API's today.  Can't seem to get the realestate service I was going to use to work because of an issue with cross site scripting and local host.  Tomorrow I'm going to pick up with Yahoo weather and I requested a key to a service that will give average rental prices for a give city / state combination.  I think that will be good enough to round it out as an example of what can be done. 
