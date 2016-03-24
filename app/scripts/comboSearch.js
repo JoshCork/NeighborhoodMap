@@ -5,12 +5,12 @@
 
 // This example requires the Places library. Include the libraries=places
 // parameter when you first load the API. For example:
-// <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
+// <script src='https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places'>
 
 var map, places, infoWindow;
 var markers = [];
 var autocomplete;
-var $wikiElem = $("#wikipedia-links");
+var $wikiElem = $('#wikipedia-links');
 var MARKER_PATH = 'https://maps.gstatic.com/intl/en_us/mapfiles/marker_green';
 var flickrKey = '6c50d3c0a8cd35d228fd25d74f2f663c'
 
@@ -41,7 +41,7 @@ function initMap() {
     });
 
     // Create the autocomplete object and associate it with the UI input control.
-    // Restrict the search to the default country, and to place type "cities".
+    // Restrict the search to the default country, and to place type 'cities'.
     autocomplete = new google.maps.places.Autocomplete(
         /** @type {!HTMLInputElement} */
         (
@@ -172,8 +172,8 @@ function clearResults() {
         results.removeChild(results.childNodes[0]);
     }
     myPlaces = [];
-    $("ul").empty();
-    $("#images").empty();
+    $('ul').empty();
+    $('#images').empty();
 }
 
 // Get the place details for a hotel. Show the information in an info window,
@@ -192,10 +192,10 @@ function showInfoWindow() {
 
 // Load the place information into the HTML elements used by the info window.
 function buildIWContent(place) {
-    document.getElementById('iw-icon').innerHTML = '<img class="hotelIcon" ' +
-        'src="' + place.icon + '"/>';
-    document.getElementById('iw-url').innerHTML = '<b><a href="' + place.url +
-        '">' + place.name + '</a></b>';
+    document.getElementById('iw-icon').innerHTML = '<img class='hotelIcon' ' +
+        'src='' + place.icon + ''/>';
+    document.getElementById('iw-url').innerHTML = '<b><a href='' + place.url +
+        ''>' + place.name + '</a></b>';
     document.getElementById('iw-address').textContent = place.vicinity;
 
     if (place.formatted_phone_number) {
@@ -242,36 +242,36 @@ function buildIWContent(place) {
 
 function getWikipediaNearby(thePlace) {
 
-    var wpUrl = "http://en.wikipedia.org/w/api.php?action=query&list=geosearch&gsradius=10000&gscoord=" + thePlace.geometry.location.lat() + "%7C" + thePlace.geometry.location.lng() + "&format=json";
+    var wpUrl = 'http://en.wikipedia.org/w/api.php?action=query&list=geosearch&gsradius=10000&gscoord=' + thePlace.geometry.location.lat() + '%7C' + thePlace.geometry.location.lng() + '&format=json';
     var wikiRequestTimeout = setTimeout(function() {
-        $wikiElem.text("failed to get Wikipedia resources.");
+        $wikiElem.text('failed to get Wikipedia resources.');
     }, 8000);
 
     $.ajax({
         url: wpUrl,
         crossDomain: true,
-        dataType: "jsonp",
+        dataType: 'jsonp',
         success: function(jsonpData) {
             var wikiItems = [];
-            var resultsBaseUrl = "http://en.wikipedia.org/wiki/";
-            console.log("Wikipedia Results: " + jsonpData);
-            console.log("title of first result: " + jsonpData.query.geosearch[0].title);
+            var resultsBaseUrl = 'http://en.wikipedia.org/wiki/';
+            console.log('Wikipedia Results: ' + jsonpData);
+            console.log('title of first result: ' + jsonpData.query.geosearch[0].title);
             $.each(jsonpData.query.geosearch, function(key, val) {
                 // wikiItems.push(this.title);
-                wikiItems.push("<li class='article' id='" + key + "'><a href='" + resultsBaseUrl + this.title + "' target='_blank'>" + this.title + "</a></li>");
-                console.log("i have pushed to WikiArray");
+                wikiItems.push('<li class='article' id='' + key + ''><a href='' + resultsBaseUrl + this.title + '' target='_blank'>' + this.title + '</a></li>');
+                console.log('i have pushed to WikiArray');
             });
 
             clearTimeout(wikiRequestTimeout);
 
-            $("<ul/>", {
-                "id": "wikipedia-links",
-                html: wikiItems.join("")
-            }).appendTo(".wikipedia-container");
+            $('<ul/>', {
+                'id': 'wikipedia-links',
+                html: wikiItems.join('')
+            }).appendTo('.wikipedia-container');
 
         },
         error: function(e) {
-            console.log("I am the error: " + e);
+            console.log('I am the error: ' + e);
         }
     });
 }
@@ -290,12 +290,12 @@ function getFlickrPhotos(pLat, pLon) {
 
     var url = flickrBaseUrl + '&api_key=' + apiKey + '&safe_search=' + safe_search + '&sort=' + sort + '&lat=' + pLat + '&lon=' + pLon + '&radius=' + radius + '&radius_units=' + radius_units + '&content_type=' + content_type + '&per_page=' + perPage;
 
-    $.getJSON(url + "&format=json&jsoncallback=?", function(data) {
-        console.log("flickr photos are coming!");
+    $.getJSON(url + '&format=json&jsoncallback=?', function(data) {
+        console.log('flickr photos are coming!');
         console.log(data);
         $.each(data.photos.photo, function(i, item) {
-            src = "http://farm" + item.farm + ".static.flickr.com/" + item.server + "/" + item.id + "_" + item.secret + "_m.jpg";
-            $("<img/>").attr("src", src).appendTo("#images");
+            src = 'http://farm' + item.farm + '.static.flickr.com/' + item.server + '/' + item.id + '_' + item.secret + '_m.jpg';
+            $('<img/>').attr('src', src).appendTo('#images');
             if (i == 3) return false;
         });
     });
@@ -312,15 +312,15 @@ function getWeather() {
             woeid: '',
             unit: 'f',
             success: function(weather) {
-                html = '<h2><i class="icon-' + weather.code + '"></i> ' + weather.temp + '&deg;' + weather.units.temp + '</h2>';
+                html = '<h2><i class='icon-' + weather.code + ''></i> ' + weather.temp + '&deg;' + weather.units.temp + '</h2>';
                 html += '<ul><li>' + weather.city + ', ' + weather.region + '</li>';
-                html += '<li class="currently">' + weather.currently + '</li>';
+                html += '<li class='currently'>' + weather.currently + '</li>';
                 html += '<li>' + weather.wind.direction + ' ' + weather.wind.speed + ' ' + weather.units.speed + '</li></ul>';
 
-                $("#weather").html(html);
+                $('#weather').html(html);
             },
             error: function(error) {
-                $("#weather").html('<p>' + error + '</p>');
+                $('#weather').html('<p>' + error + '</p>');
             }
         });
     });
