@@ -2,6 +2,13 @@
 You will develop a single-page application featuring a map of your neighborhood or a neighborhood you would like to visit. You will then add additional functionality to this application, including: map markers to identify popular locations or places you’d like to visit, a search function to easily discover these locations, and a listview to support simple browsing of all locations. You will then research and implement third-party APIs that provide additional information about each of these locations (such as StreetView images, Wikipedia articles, Yelp reviews, etc).
 
 
+## 3/24/2016
+All the basic features are now working and I can now deploy via Gulp using 'Gulp Deploy'.  Stuff that still needs to be done:
+
+- Wikipedia links are currently not working right if there is a space in the name
+- Sometimes the search doesn't provide Wikipedia info or Flickr photos until the second time you search for it. 
+- For some reason after searching the rest of the menu options at the top go away (about us, contact us, etc..). 
+
 ## 3/23/2016
 Trying to deploy to gh-pages is easy once I get the project to build.  Need to pick up tomorrow getting gulp to build the project w/out errors and create the distribution.  Right now there are errors with jquery. 
 

@@ -1,4 +1,4 @@
-/*eslint no-unused-vars: [2, { "varsIgnorePattern": "initMap" }]*/
+/*eslint no-unused-vars: [1, { "varsIgnorePattern": "initMap" }]*/
 
 
 
@@ -28,44 +28,12 @@ var myPlaces = [];
 
 
 
-function initMap() {
-    "use strict";
 
-    map = new google.maps.Map(document.getElementById('map'), {
-        center: {
-            lat: 33.3539759,
-            lng: -111.7152599
-        },
-        zoom: 13,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-
-    });
-
-    infoWindow = new google.maps.InfoWindow({
-        content: document.getElementById('info-content')
-    });
-
-    // Create the autocomplete object and associate it with the UI input control.
-    // Restrict the search to the default country, and to place type 'cities'.
-    autocomplete = new google.maps.places.Autocomplete(
-        /** @type {!HTMLInputElement} */
-        (
-            document.getElementById('autocomplete')), {
-
-        });
-    places = new google.maps.places.PlacesService(map);
-
-    // Create the search box and link it to the UI element.
-    var input = document.getElementById('autocomplete');
-    map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-
-    autocomplete.addListener('place_changed', onPlaceChanged);
-
-}
 
 // When the user selects a city, get the place details for the city and
 // zoom the map in on the city.
 function onPlaceChanged() {
+    'use strict';
     var place = autocomplete.getPlace();
     if (place.geometry) {
         map.panTo(place.geometry.location);
@@ -73,7 +41,7 @@ function onPlaceChanged() {
         search();
         getWikipediaNearby(place);
         getFlickrPhotos(place.geometry.location.lat(), place.geometry.location.lng());
-        getWeather();
+        //getWeather();
     } else {
         document.getElementById('autocomplete').placeholder = 'Enter a city';
     }
@@ -81,13 +49,14 @@ function onPlaceChanged() {
 
 // Search for hotels in the selected city, within the viewport of the map.
 function search() {
-    var search = {
+    'use strict';
+    var theSearch = {
         bounds: map.getBounds(),
         types: ['school', 'store', 'food'],
         radius: 1000
     };
 
-    places.nearbySearch(search, function(results, status) {
+    places.nearbySearch(theSearch, function(results, status) {
         if (status === google.maps.places.PlacesServiceStatus.OK) {
             clearResults();
             clearMarkers();
@@ -114,6 +83,7 @@ function search() {
 }
 
 function clearMarkers() {
+    'use strict';
     for (var i = 0; i < markers.length; i++) {
         if (markers[i]) {
             markers[i].setMap(null);
@@ -122,30 +92,16 @@ function clearMarkers() {
     markers = [];
 }
 
-// Set the country restriction based on user input.
-// Also center and zoom the map on the given country.
-function setAutocompleteCountry() {
-    var country = document.getElementById('country').value;
-    if (country == 'all') {
-        autocomplete.setComponentRestrictions([]);
-        map.setCenter({ lat: 15, lng: 0 });
-        map.setZoom(2);
-    } else {
-        autocomplete.setComponentRestrictions({ 'country': country });
-        map.setCenter(countries[country].center);
-        map.setZoom(countries[country].zoom);
-    }
-    clearResults();
-    clearMarkers();
-}
 
 function dropMarker(i) {
+    'use strict';
     return function() {
         markers[i].setMap(map);
     };
 }
 
 function addResult(result, i) {
+    'use strict';
     var results = document.getElementById('results');
     var markerLetter = String.fromCharCode('A'.charCodeAt(0) + i);
     var markerIcon = MARKER_PATH + markerLetter + '.png';
@@ -171,7 +127,9 @@ function addResult(result, i) {
     results.appendChild(tr);
 }
 
+
 function clearResults() {
+    'use strict';
     var results = document.getElementById('results');
     while (results.childNodes[0]) {
         results.removeChild(results.childNodes[0]);
@@ -181,22 +139,9 @@ function clearResults() {
     $('#images').empty();
 }
 
-// Get the place details for a hotel. Show the information in an info window,
-// anchored on the marker for the hotel that the user selected.
-function showInfoWindow() {
-    var marker = this;
-    places.getDetails({ placeId: marker.placeResult.place_id },
-        function(place, status) {
-            if (status !== google.maps.places.PlacesServiceStatus.OK) {
-                return;
-            }
-            infoWindow.open(map, marker);
-            buildIWContent(place);
-        });
-}
-
 // Load the place information into the HTML elements used by the info window.
 function buildIWContent(place) {
+    'use strict';
     document.getElementById('iw-icon').innerHTML = '<img class="hotelIcon"' + 'src=' + place.icon + '/>';
     document.getElementById('iw-url').innerHTML = '<b><a href=' + place.url + '>' + place.name + '</a></b>';
     document.getElementById('iw-address').textContent = place.vicinity;
@@ -242,8 +187,25 @@ function buildIWContent(place) {
     }
 }
 
-function getWikipediaNearby(thePlace) {
+// Get the place details for a hotel. Show the information in an info window,
+// anchored on the marker for the hotel that the user selected.
+function showInfoWindow() {
+    'use strict';
+    var marker = this;
+    places.getDetails({ placeId: marker.placeResult.place_id },
+        function(place, status) {
+            if (status !== google.maps.places.PlacesServiceStatus.OK) {
+                return;
+            }
+            infoWindow.open(map, marker);
+            buildIWContent(place);
+        });
+}
 
+
+
+function getWikipediaNearby(thePlace) {
+    'use strict';
     var wpUrl = 'http://en.wikipedia.org/w/api.php?action=query&list=geosearch&gsradius=10000&gscoord=' + thePlace.geometry.location.lat() + '%7C' + thePlace.geometry.location.lng() + '&format=json';
     var wikiRequestTimeout = setTimeout(function() {
         $wikiElem.text('failed to get Wikipedia resources.');
@@ -279,8 +241,8 @@ function getWikipediaNearby(thePlace) {
 }
 
 function getFlickrPhotos(pLat, pLon) {
-    var flickrSearchParameters
-    var flickrBaseUrl = 'https://www.flickr.com/services/rest/?method=flickr.photos.search&format=json'
+    'use strict';
+    var flickrBaseUrl = 'https://www.flickr.com/services/rest/?method=flickr.photos.search&format=json';
     var src;
     var apiKey = '6c50d3c0a8cd35d228fd25d74f2f663c';
     var safe_search = 1;
@@ -298,14 +260,14 @@ function getFlickrPhotos(pLat, pLon) {
         $.each(data.photos.photo, function(i, item) {
             src = 'http://farm' + item.farm + '.static.flickr.com/' + item.server + '/' + item.id + '_' + item.secret + '_m.jpg';
             $('<img/>').attr('src', src).appendTo('#images');
-            if (i == 3) return false;
+            if (i === 3) { return false; }
         });
     });
 
 }
 
 function getWeather() {
-
+    'use strict';
     // v3.1.0
     //Docs at http://simpleweatherjs.com
     $(document).ready(function() {
@@ -319,13 +281,46 @@ function getWeather() {
                 html += '<li class="currently">' + weather.currently + '</li>';
                 html += '<li>' + weather.wind.direction + ' ' + weather.wind.speed + ' ' + weather.units.speed + '</li></ul>';
 
-                $("#weather").html(html);
+                $('#weather').html(html);
             },
             error: function(error) {
-                $("#weather").html('<p>' + error + '</p>');
+                $('#weather').html('<p>' + error + '</p>');
             }
         });
     });
+}
 
 
+function initMap() {
+    'use strict';
+
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: {
+            lat: 33.3539759,
+            lng: -111.7152599
+        },
+        zoom: 13,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+
+    });
+
+    infoWindow = new google.maps.InfoWindow({
+        content: document.getElementById('info-content')
+    });
+
+    // Create the autocomplete object and associate it with the UI input control.
+    // Restrict the search to the default country, and to place type 'cities'.
+    autocomplete = new google.maps.places.Autocomplete(
+        /** @type {!HTMLInputElement} */
+        (
+            document.getElementById('autocomplete')), {
+
+        });
+    places = new google.maps.places.PlacesService(map);
+
+    // Create the search box and link it to the UI element.
+    var input = document.getElementById('autocomplete');
+    map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+    autocomplete.addListener('place_changed', onPlaceChanged);
 }
