@@ -1,3 +1,7 @@
+/*eslint no-unused-vars: [2, { "varsIgnorePattern": "initMap" }]*/
+
+
+
 // This example uses the autocomplete feature of the Google Places API.
 // It allows the user to find all hotels in a given place, within a given
 // country. It then displays markers for all the hotels returned,
@@ -12,7 +16,6 @@ var markers = [];
 var autocomplete;
 var $wikiElem = $('#wikipedia-links');
 var MARKER_PATH = 'https://maps.gstatic.com/intl/en_us/mapfiles/marker_green';
-var flickrKey = '6c50d3c0a8cd35d228fd25d74f2f663c'
 
 var hostnameRegexp = new RegExp('^https?://.+?/');
 var myPlaces = [];
@@ -26,6 +29,8 @@ var myPlaces = [];
 
 
 function initMap() {
+    "use strict";
+
     map = new google.maps.Map(document.getElementById('map'), {
         center: {
             lat: 33.3539759,
