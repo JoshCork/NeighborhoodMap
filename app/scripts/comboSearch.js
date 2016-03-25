@@ -217,12 +217,12 @@ function getWikipediaNearby(thePlace) {
         dataType: 'jsonp',
         success: function(jsonpData) {
             var wikiItems = [];
-            var resultsBaseUrl = 'http://en.wikipedia.org/wiki/';
+            var resultsBaseUrl = 'https://en.wikipedia.org/?curid=';
             console.log('Wikipedia Results: ' + jsonpData);
             console.log('title of first result: ' + jsonpData.query.geosearch[0].title);
             $.each(jsonpData.query.geosearch, function(key, val) {
                 // wikiItems.push(this.title);
-                wikiItems.push('<li class="article" id=""' + key + '><a href=' + resultsBaseUrl + this.title + ' target="_blank">' + this.title + '</a></li>');
+                wikiItems.push('<li class="article" id=""' + key + '><a href=' + resultsBaseUrl + this.pageid + ' target="_blank">' + this.title + '</a></li>');
                 console.log('i have pushed to WikiArray');
             });
 
