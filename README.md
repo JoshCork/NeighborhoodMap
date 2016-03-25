@@ -2,7 +2,16 @@
 You will develop a single-page application featuring a map of your neighborhood or a neighborhood you would like to visit. You will then add additional functionality to this application, including: map markers to identify popular locations or places you’d like to visit, a search function to easily discover these locations, and a listview to support simple browsing of all locations. You will then research and implement third-party APIs that provide additional information about each of these locations (such as StreetView images, Wikipedia articles, Yelp reviews, etc).
 
 
-## 3/24/2016
+## 3/24/2016 
+### 10pm
+
+- Fixed Wiki links
+- Fixed the dropping of the menu (related to how I was clearing wiki results).
+- Still need to figure out the lag / no show of the dat asome times. 
+- Weather still needs to be worked. 
+- Still need to properly clear the Wikipedia Links - need to change how the appending is happening. 
+
+### 4pm
 All the basic features are now working and I can now deploy via Gulp using 'Gulp Deploy'.  Stuff that still needs to be done:
 
 - Wikipedia links are currently not working right if there is a space in the name

@@ -135,8 +135,9 @@ function clearResults() {
         results.removeChild(results.childNodes[0]);
     }
     myPlaces = [];
-    $('ul').empty();
+    $('#results').empty();
     $('#images').empty();
+    $('#wikipedia-links').empty();
 }
 
 // Load the place information into the HTML elements used by the info window.
