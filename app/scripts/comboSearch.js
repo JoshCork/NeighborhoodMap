@@ -7,6 +7,7 @@
  *  @var {object} map               - This variable holds the google map object that is used for mapping.
  *  @var {object} places            - This variable holds the places service that is tied to map.  Used when searching for a place.
  *  @var {object} infoWindow        - This variable holds the google maps info window object this is used to display marker info on the map.
+ *  @var {array}  markers           - This variable is an array that holds marker objects returned from the google maps search.
  *  @var {object} autocomplete      - This variable holds the google maps autocomplete object allowing search results to be passed back to the text box as they are typing.
  *  @var {string} MARKER_PATH       - This variable holds the marker image base url path that we use to display on the map for each place result that is returned from google maps.
  *  @var {object} hostnameRegexp    - This variable holds a Regular expression object used to determine the base URL for places that are returned and displaying the short portion of them.
@@ -21,8 +22,11 @@ var hostnameRegexp = new RegExp('^https?://.+?/');
 
 /**
  * onPlaceChanged()
- * When the user selects a city, get the place details for the city and zoom the map in on the city.
- * @return {[type]} [description]
+ * When the user selects a city, get the place details for the city and zoom the map in on the city. Then calls
+ * the rest of the functions used to
+ * @var {object} place      - Holds the results coming back from the autocomplete get place function.
+ *
+ * @return {n/a}            - This function does not return anything.
  */
 function onPlaceChanged() {
     var place = autocomplete.getPlace();
@@ -32,14 +36,19 @@ function onPlaceChanged() {
         search();
         getWikipediaNearby(place);
         getFlickrPhotos(place.geometry.location.lat(), place.geometry.location.lng());
-
-        //getWeather();
     } else {
         document.getElementById('autocomplete').placeholder = 'Enter a city';
     }
 }
 
-// Search for hotels in the selected city, within the viewport of the map.
+
+
+/**
+ * Search for places in the selected area from autocomplete.
+ * @var {object} theSearch  - This variable holds the configuration for the search to be performed (what map bounds to use
+ *                          , what types of palces to search, distance from autocorrect result, etc..).
+ * @return {n/a}    - This function does not return anything and instead calls a function that adds results to an array.
+ */
 function search() {
 
     var theSearch = {
@@ -48,13 +57,16 @@ function search() {
         radius: 1000
     };
 
+    /** calls the nearby function of places passing into it the config from theSearch and a callback funciton. */
     places.nearbySearch(theSearch, function(results, status) {
         if (status === google.maps.places.PlacesServiceStatus.OK) {
+
+            //first clear all markers and results.
             clearResults();
             clearMarkers();
 
-            // Create a marker for each hotel found, and
-            // assign a letter of the alphabetic to each marker icon.
+            // Create a marker for each place that is found, and
+            // assign a letter of the alphabet to each marker icon.
             for (var i = 0; i < results.length; i++) {
                 var markerLetter = String.fromCharCode('A'.charCodeAt(0) + i);
                 var markerIcon = MARKER_PATH + markerLetter + '.png';
@@ -64,11 +76,14 @@ function search() {
                     animation: google.maps.Animation.DROP,
                     icon: markerIcon
                 });
+
                 // If the user clicks a place marker, show the details of that place
                 // in an info window.
                 markers[i].placeResult = results[i];
                 google.maps.event.addListener(markers[i], 'click', showInfoWindow);
                 setTimeout(dropMarker(i), i * 100);
+
+                // call the addResult funciton to add each result to the result set for displaying on the page.
                 addResult(results[i], i);
             }
         }
@@ -77,8 +92,14 @@ function search() {
 
 }
 
-function clearMarkers() {
 
+/**
+ * clearMarkers is used to pull the markers off the page when performing a new search and getting
+ * a new search result.
+ * @return {n/a} This funciton does not return any values.
+ */
+function clearMarkers() {
+    //remove each individual marker from the map using Google Places  setMap marker method.
     for (var i = 0; i < markers.length; i++) {
         if (markers[i]) {
             markers[i].setMap(null);
@@ -87,21 +108,33 @@ function clearMarkers() {
     markers = [];
 }
 
-
+/** Called for each marker in the markers array and places that marker on the map.
+markers are dropped onto the map based on the configuration specified when the marker
+was created in the search function.
+**/
 function dropMarker(i) {
-
     return function() {
         markers[i].setMap(map);
     };
 }
 
+/**
+ * The addResults functionplaces the results from the search function onto the page.
+ * @param {object} result       - An individual placeResult object from the Google Places API
+ * @param {int} i               - This is the number of the result in the array of results.  It's used to tie the table of
+ *                                data showing the result to the marker on the map so that the proper info window can be shown.
+ * @var {object} results        - holds HTML elements associed with the result id to be manipulated and display things on the page.
+ * @var {string} markerLetter   - holds the letter of the alphabet to corresponds to an individual result.
+ * @var {string} markerIcon     - holds the path to the marker icon used for this specific place.
+ * @var {object} tr             - holds an empty table row html element.
+ */
 function addResult(result, i) {
 
     var results = document.getElementById('results');
     var markerLetter = String.fromCharCode('A'.charCodeAt(0) + i);
     var markerIcon = MARKER_PATH + markerLetter + '.png';
-
     var tr = document.createElement('tr');
+
     tr.style.backgroundColor = (i % 2 === 0 ? '#F0F0F0' : '#FFFFFF');
     tr.onclick = function() {
         google.maps.event.trigger(markers[i], 'click');
