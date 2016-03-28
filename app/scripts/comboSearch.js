@@ -127,6 +127,10 @@ function dropMarker(i) {
  * @var {string} markerLetter   - holds the letter of the alphabet to corresponds to an individual result.
  * @var {string} markerIcon     - holds the path to the marker icon used for this specific place.
  * @var {object} tr             - holds an empty table row html element.
+ * @var {object} iconTd         - holds an empty table cell html element to be used to hold the icon of the place.
+ * @var {object} nameTD         - holds an empty table cell html element to be used to hold the name of the place.
+ * @var {object} icon           - holds an empty image html element to be used to keep the icon for this individual place.
+ * @var {object} name           - holds the text name of this specific result.
  */
 function addResult(result, i) {
 
@@ -134,19 +138,22 @@ function addResult(result, i) {
     var markerLetter = String.fromCharCode('A'.charCodeAt(0) + i);
     var markerIcon = MARKER_PATH + markerLetter + '.png';
     var tr = document.createElement('tr');
+    var iconTd = document.createElement('td');
+    var nameTd = document.createElement('td');
+    var icon = document.createElement('img');
+    var name = document.createTextNode(result.name);
 
     tr.style.backgroundColor = (i % 2 === 0 ? '#F0F0F0' : '#FFFFFF');
+    //calls the click function for the specific marker on the map that this table row is tied to.
     tr.onclick = function() {
         google.maps.event.trigger(markers[i], 'click');
     };
 
-    var iconTd = document.createElement('td');
-    var nameTd = document.createElement('td');
-    var icon = document.createElement('img');
+
     icon.src = markerIcon;
     icon.setAttribute('class', 'placeIcon');
     icon.setAttribute('className', 'placeIcon');
-    var name = document.createTextNode(result.name);
+
     iconTd.appendChild(icon);
     nameTd.appendChild(name);
     tr.appendChild(iconTd);
@@ -155,19 +162,24 @@ function addResult(result, i) {
 }
 
 
+/**
+ * clearResutls function sets all the HTML elements to empty for the content from the previous search.
+ * @return {n/a} This function does not return anything.
+ */
 function clearResults() {
-
     $('#images').empty();
     $('#wikipedia-links').empty();
-    // var results = document.getElementById('results');
-    // while (results.childNodes[0]) {
-    //     results.removeChild(results.childNodes[0]);
-    // }
     $('#results').empty();
-
 }
 
 // Load the place information into the HTML elements used by the info window.
+
+/**
+ * This function builds the information window that pops up and is displayed when a user
+ * clicks on the marker for that place.
+ * @param  {object} place       - A google maps places place.  Used to
+ * @return {[type]}       [description]
+ */
 function buildIWContent(place) {
 
     document.getElementById('iw-icon').innerHTML = '<img class="hotelIcon"' + 'src=' + place.icon + '/>';
