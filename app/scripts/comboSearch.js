@@ -1,16 +1,29 @@
+/*eslint no-unused-vars: 1*/
+/*eslint no-undef: 1*/
 'use strict';
 
+/**
+ *  Variables scoped to comboSearch.js and used throughout the script.
+ *  @var {object} map               - This variable holds the google map object that is used for mapping.
+ *  @var {object} places            - This variable holds the places service that is tied to map.  Used when searching for a place.
+ *  @var {object} infoWindow        - This variable holds the google maps info window object this is used to display marker info on the map.
+ *  @var {object} autocomplete      - This variable holds the google maps autocomplete object allowing search results to be passed back to the text box as they are typing.
+ *  @var {string} MARKER_PATH       - This variable holds the marker image base url path that we use to display on the map for each place result that is returned from google maps.
+ *  @var {object} hostnameRegexp    - This variable holds a Regular expression object used to determine the base URL for places that are returned and displaying the short portion of them.
+ */
 var map, places, infoWindow;
 var markers = [];
 var autocomplete;
 var MARKER_PATH = 'https://maps.gstatic.com/intl/en_us/mapfiles/marker_green';
-
 var hostnameRegexp = new RegExp('^https?://.+?/');
-var myPlaces = [];
 
+//
 
-// When the user selects a city, get the place details for the city and
-// zoom the map in on the city.
+/**
+ * onPlaceChanged()
+ * When the user selects a city, get the place details for the city and zoom the map in on the city.
+ * @return {[type]} [description]
+ */
 function onPlaceChanged() {
     var place = autocomplete.getPlace();
     if (place.geometry) {
@@ -87,7 +100,6 @@ function addResult(result, i) {
     var results = document.getElementById('results');
     var markerLetter = String.fromCharCode('A'.charCodeAt(0) + i);
     var markerIcon = MARKER_PATH + markerLetter + '.png';
-    myPlaces.push(result);
 
     var tr = document.createElement('tr');
     tr.style.backgroundColor = (i % 2 === 0 ? '#F0F0F0' : '#FFFFFF');
@@ -118,7 +130,6 @@ function clearResults() {
     // while (results.childNodes[0]) {
     //     results.removeChild(results.childNodes[0]);
     // }
-    myPlaces = [];
     $('#results').empty();
 
 }
