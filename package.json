@@ -39,7 +39,8 @@
     "rules": {
       "quotes": [2,"single"],
       "camelcase": "warn",
-      "no-undef" : "warn"
+      "no-undef" : "warn",
+      "no-unused-vars": "warn"
     }
   }
 }

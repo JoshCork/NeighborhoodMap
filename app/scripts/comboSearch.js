@@ -1,15 +1,4 @@
-/*eslint no-unused-vars: [1, { "varsIgnorePattern": "initMap" }]*/
-
-
-
-// This example uses the autocomplete feature of the Google Places API.
-// It allows the user to find all hotels in a given place, within a given
-// country. It then displays markers for all the hotels returned,
-// with on-click details for each hotel.
-
-// This example requires the Places library. Include the libraries=places
-// parameter when you first load the API. For example:
-// <script src='https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places'>
+'use strict';
 
 var map, places, infoWindow;
 var markers = [];
@@ -20,24 +9,16 @@ var hostnameRegexp = new RegExp('^https?://.+?/');
 var myPlaces = [];
 
 
-// // Create the search box and link it to the UI element.
-// var input = document.getElementById('autocomplete');
-// var searchBox = new google.maps.places.SearchBox(input);
-// map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-
-
-
-
-
 // When the user selects a city, get the place details for the city and
 // zoom the map in on the city.
 function onPlaceChanged() {
-    'use strict';
     var place = autocomplete.getPlace();
     if (place.geometry) {
         map.panTo(place.geometry.location);
         map.setZoom(15);
         search();
+        getWikipediaNearby(place);
+        getFlickrPhotos(place.geometry.location.lat(), place.geometry.location.lng());
 
         //getWeather();
     } else {
@@ -47,7 +28,7 @@ function onPlaceChanged() {
 
 // Search for hotels in the selected city, within the viewport of the map.
 function search() {
-    'use strict';
+
     var theSearch = {
         bounds: map.getBounds(),
         types: ['school', 'store', 'food'],
@@ -58,8 +39,7 @@ function search() {
         if (status === google.maps.places.PlacesServiceStatus.OK) {
             clearResults();
             clearMarkers();
-            getWikipediaNearby(place);
-            getFlickrPhotos(place.geometry.location.lat(), place.geometry.location.lng());
+
             // Create a marker for each hotel found, and
             // assign a letter of the alphabetic to each marker icon.
             for (var i = 0; i < results.length; i++) {
@@ -80,10 +60,12 @@ function search() {
             }
         }
     });
+
+
 }
 
 function clearMarkers() {
-    'use strict';
+
     for (var i = 0; i < markers.length; i++) {
         if (markers[i]) {
             markers[i].setMap(null);
@@ -94,14 +76,14 @@ function clearMarkers() {
 
 
 function dropMarker(i) {
-    'use strict';
+
     return function() {
         markers[i].setMap(map);
     };
 }
 
 function addResult(result, i) {
-    'use strict';
+
     var results = document.getElementById('results');
     var markerLetter = String.fromCharCode('A'.charCodeAt(0) + i);
     var markerIcon = MARKER_PATH + markerLetter + '.png';
@@ -129,13 +111,13 @@ function addResult(result, i) {
 
 
 function clearResults() {
-    'use strict';
+
     $('#images').empty();
     $('#wikipedia-links').empty();
-    var results = document.getElementById('results');
-    while (results.childNodes[0]) {
-        results.removeChild(results.childNodes[0]);
-    }
+    // var results = document.getElementById('results');
+    // while (results.childNodes[0]) {
+    //     results.removeChild(results.childNodes[0]);
+    // }
     myPlaces = [];
     $('#results').empty();
 
@@ -143,7 +125,7 @@ function clearResults() {
 
 // Load the place information into the HTML elements used by the info window.
 function buildIWContent(place) {
-    'use strict';
+
     document.getElementById('iw-icon').innerHTML = '<img class="hotelIcon"' + 'src=' + place.icon + '/>';
     document.getElementById('iw-url').innerHTML = '<b><a href=' + place.url + '>' + place.name + '</a></b>';
     document.getElementById('iw-address').textContent = place.vicinity;
@@ -176,11 +158,9 @@ function buildIWContent(place) {
     // The regexp isolates the first part of the URL (domain plus subdomain)
     // to give a short URL for displaying in the info window.
     if (place.website) {
-        var fullUrl = place.website;
         var website = hostnameRegexp.exec(place.website);
         if (website === null) {
             website = 'http://' + place.website + '/';
-            fullUrl = website;
         }
         document.getElementById('iw-website-row').style.display = '';
         document.getElementById('iw-website').textContent = website;
@@ -192,7 +172,7 @@ function buildIWContent(place) {
 // Get the place details for a hotel. Show the information in an info window,
 // anchored on the marker for the hotel that the user selected.
 function showInfoWindow() {
-    'use strict';
+
     var marker = this;
     places.getDetails({ placeId: marker.placeResult.place_id },
         function(place, status) {
@@ -207,7 +187,7 @@ function showInfoWindow() {
 
 
 function getWikipediaNearby(thePlace) {
-    'use strict';
+
     var wpUrl = 'http://en.wikipedia.org/w/api.php?action=query&list=geosearch&gsradius=10000&gscoord=' + thePlace.geometry.location.lat() + '%7C' + thePlace.geometry.location.lng() + '&format=json';
     var wikiRequestTimeout = setTimeout(function() {
         $wikiElem.text('failed to get Wikipedia resources.');
@@ -235,7 +215,7 @@ function getWikipediaNearby(thePlace) {
 }
 
 function getFlickrPhotos(pLat, pLon) {
-    'use strict';
+
     var flickrBaseUrl = 'https://www.flickr.com/services/rest/?method=flickr.photos.search&format=json';
     var src;
     var apiKey = '6c50d3c0a8cd35d228fd25d74f2f663c';
@@ -249,28 +229,28 @@ function getFlickrPhotos(pLat, pLon) {
     var url = flickrBaseUrl + '&api_key=' + apiKey + '&safe_search=' + safe_search + '&sort=' + sort + '&lat=' + pLat + '&lon=' + pLon + '&radius=' + radius + '&radius_units=' + radius_units + '&content_type=' + content_type + '&per_page=' + perPage;
 
     $.getJSON(url + '&format=json&jsoncallback=?', function(data) {
-        console.log('the length is: '
-            data.photos.photo.length);
+        console.log('the length is: ' + data.photos.photo.length);
         if (data.photos.photo.length > 0) {
             $.each(data.photos.photo, function(i, item) {
                 src = 'http://farm' + item.farm + '.static.flickr.com/' + item.server + '/' + item.id + '_' + item.secret + '_m.jpg';
                 $('<img/>').attr('src', src).appendTo('#images').wrap('<a href="https://www.flickr.com/photos/' + item.owner + '/' + item.id + '" target="_blank"></a>');
                 if (i === 5) {
                     $('#images').justifiedGallery({
-                        rowHeight: 50,
-                        margins: 3
+                        rowHeight: 70,
+                        margins: 3,
+                        lastRow: 'justify'
                     });
                     return false;
                 }
             });
         } else {
-            $('#images').append('<p> sadly, there are no images to be found.</p>')
+            $('#images').append('<p> sadly, there are no images to be found.</p>');
         }
     });
 }
 
 function getWeather() {
-    'use strict';
+
     // v3.1.0
     //Docs at http://simpleweatherjs.com
     $(document).ready(function() {
@@ -294,7 +274,7 @@ function getWeather() {
 
 
 function initMap() {
-    'use strict';
+
 
     map = new google.maps.Map(document.getElementById('map'), {
         center: {
