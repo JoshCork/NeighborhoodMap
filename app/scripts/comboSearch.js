@@ -11,12 +11,14 @@
  *  @var {object} autocomplete      - This variable holds the google maps autocomplete object allowing search results to be passed back to the text box as they are typing.
  *  @var {string} MARKER_PATH       - This variable holds the marker image base url path that we use to display on the map for each place result that is returned from google maps.
  *  @var {object} hostnameRegexp    - This variable holds a Regular expression object used to determine the base URL for places that are returned and displaying the short portion of them.
+ *  @var {object} $wikiElem         - This variable holds a jquery object reference to a specific set of HTML on the page.
  */
 var map, places, infoWindow;
 var markers = [];
 var autocomplete;
 var MARKER_PATH = 'https://maps.gstatic.com/intl/en_us/mapfiles/marker_green';
 var hostnameRegexp = new RegExp('^https?://.+?/');
+var $wikiElem = $('#wikipedia-links');
 
 //
 
@@ -47,7 +49,7 @@ function onPlaceChanged() {
  * Search for places in the selected area from autocomplete.
  * @var {object} theSearch  - This variable holds the configuration for the search to be performed (what map bounds to use
  *                          , what types of palces to search, distance from autocorrect result, etc..).
- * @return {n/a}    - This function does not return anything and instead calls a function that adds results to an array.
+ * @return {n/a}            - This function does not return anything and instead calls a function that adds results to an array.
  */
 function search() {
 
@@ -177,7 +179,8 @@ function clearResults() {
 /**
  * This function builds the information window that pops up and is displayed when a user
  * clicks on the marker for that place.
- * @param  {object} place       - A google maps places place.  Used to
+ * @param  {object} place       - A google maps places place.  Used to build the card displayed on the fly.
+ * @var {string} ratingHtml     - HTML that holds the code to display the appropriate number of star ratings for a place.
  * @return {[type]}       [description]
  */
 function buildIWContent(place) {
@@ -193,9 +196,9 @@ function buildIWContent(place) {
         document.getElementById('iw-phone-row').style.display = 'none';
     }
 
-    // Assign a five-star rating to the hotel, using a black star ('&#10029;')
-    // to indicate the rating the hotel has earned, and a white star ('&#10025;')
-    // for the rating points not achieved.
+    // Uses the Google Places rating service and displays a one to five-star rating to the place
+    // , using a black star ('&#10029;') to indicate the rating the place has earned, and a white
+    // star ('&#10025;') for the rating (number of stars) not achieved.
     if (place.rating) {
         var ratingHtml = '';
         for (var i = 0; i < 5; i++) {
@@ -211,7 +214,8 @@ function buildIWContent(place) {
         document.getElementById('iw-rating-row').style.display = 'none';
     }
 
-    // The regexp isolates the first part of the URL (domain plus subdomain)
+    // The link used on the info window takes the user to a Google Map page with much more detail.  I'm
+    // use the regexp to isolates the first part of the URL (domain plus subdomain) for this place and
     // to give a short URL for displaying in the info window.
     if (place.website) {
         var website = hostnameRegexp.exec(place.website);
@@ -225,8 +229,16 @@ function buildIWContent(place) {
     }
 }
 
-// Get the place details for a hotel. Show the information in an info window,
-// anchored on the marker for the hotel that the user selected.
+// G
+//
+
+
+/**
+ * Get the place details for a hotel. Show the information in an info window, which is anchored on the
+ * marker for the place that the user selected.
+ * @var {object} marker - Contains the object that was clicked on (this) so that the details can be displayed.
+ * @return {n/a}        - This function does not return a value.
+ */
 function showInfoWindow() {
 
     var marker = this;
@@ -241,39 +253,105 @@ function showInfoWindow() {
 }
 
 
-
-function getWikipediaNearby(thePlace) {
-
-    var wpUrl = 'http://en.wikipedia.org/w/api.php?action=query&list=geosearch&gsradius=10000&gscoord=' + thePlace.geometry.location.lat() + '%7C' + thePlace.geometry.location.lng() + '&format=json';
+/**
+ * This function is passed as the callback to the Wikipedia JSONP request and renders the HTML
+ * on the page for the Wikipedia articles.
+ * @param   {object}    data                - Wikipedia object passed back from a successful api call.
+ * @var     {object}    wikiRequestTimeout  - Holds the timeout object that will be called if data is not returned in a timely fashion.
+ * @var     {array}     wikiItems           - Holds a collection of HTML to be rendered on the page for all of the results pulled from Wikipedia.
+ * @var     {string}    resultsBaseUrl      - Holds the base URL used to build the links back to the original article.
+ * @return  {n/a}                           - This function does not return anything.
+ */
+function renderWikiDetails(data) {
     var wikiRequestTimeout = setTimeout(function() {
         $wikiElem.text('failed to get Wikipedia resources.');
     }, 10000);
+    var wikiItems = [];
+    var resultsBaseUrl = 'https://en.wikipedia.org/?curid=';
+    $.each(data.query.geosearch, function(key, val) {
+        // wikiItems.push(this.title);
+        wikiItems.push('<li class="article" id=""' + key + '><a href=' + resultsBaseUrl + this.pageid + ' target="_blank">' + this.title + '</a></li>');
+    });
+    clearTimeout(wikiRequestTimeout);
+    $(wikiItems.join('')).appendTo('#wikipedia-links');
+
+}
+
+
+
+/**
+ * This function takes a place from the Google Places API and builds the on page HTML to
+ * display Wikipedia informaotin (links to articles) based on the lat/lon of that place.
+ * @param  {object} thePlace            - A google places object that is used to pull the lat/lon data
+ *                                        and send that to Wikipedia's API and return articles that are geo tagged
+ *                                        in close proximity to the location that was searched.
+ * @return {n/a}                        - This function does not return any values directly.
+ * @var {string} wpUrl                  - Holds the api URL for Wikipedia's geosearch method.
+ *
+ */
+function getWikipediaNearby(thePlace) {
+    var wpUrl = 'http://en.wikipedia.org/w/api.php?action=query&list=geosearch&gsradius=10000&gscoord=' + thePlace.geometry.location.lat() + '%7C' + thePlace.geometry.location.lng() + '&format=json';
 
     $.ajax({
         url: wpUrl,
         crossDomain: true,
         dataType: 'jsonp',
-        success: function(jsonpData) {
-            var wikiItems = [];
-            var resultsBaseUrl = 'https://en.wikipedia.org/?curid=';
-            $.each(jsonpData.query.geosearch, function(key, val) {
-                // wikiItems.push(this.title);
-                wikiItems.push('<li class="article" id=""' + key + '><a href=' + resultsBaseUrl + this.pageid + ' target="_blank">' + this.title + '</a></li>');
-            });
-            clearTimeout(wikiRequestTimeout);
-            $(wikiItems.join('')).appendTo('#wikipedia-links');
-
-        },
+        jsonpCallback: 'renderWikiDetails',
         error: function(e) {
             console.log('I am the error: ' + e);
         }
     });
 }
 
+/**
+ * [renderFlikrPhotos description]
+ * @param   {object}    data        - Holds the data object returned from the Flickr API.
+ * @var     {string}    src         - This holds the string that is built to be a link in the html back to the source flickr image.
+ * @var     {int}       photoLimit  - Holds the number of photos to render.
+ * @return  {n/a}                   - This function does not return anything.
+ */
+function renderFlikrPhotos(data) {
+    var src;
+    var photoLimit = 5
+    if (data.photos.photo.length > 0) {
+        $.each(data.photos.photo, function(i, item) {
+            src = 'http://farm' + item.farm + '.static.flickr.com/' + item.server + '/' + item.id + '_' + item.secret + '_m.jpg';
+            $('<img/>').attr('src', src).appendTo('#images').wrap('<a href="https://www.flickr.com/photos/' + item.owner + '/' + item.id + '" target="_blank"></a>');
+            if (i === photoLimit) {
+                // uses the justifiedGallery library for stylizing the returned images.  Documentaiton can be found here: http://miromannino.github.io/Justified-Gallery/
+                $('#images').justifiedGallery({
+                    rowHeight: 70,
+                    margins: 3,
+                    lastRow: 'justify'
+                });
+                return false;
+            }
+        });
+    } else {
+        $('#images').append('<p> sadly, there are no images to be found.</p>');
+    }
+}
+
+
+/**
+ * This function is used to make a call to Flickr to pull back the photos that are geotagged
+ * in an area near the area where the user searched the google map.
+ * @param   {float}     pLat     - The latitude of the place that was searched.
+ * @param   {float}     pLon     - The longitude of the place that was searched.
+ * @var     {string}    flickrBaseUrl - This holds the base url used to consume the flickr API
+ * @var     {string}    apiKey          - This holds the flickr API key that is used to consume the api
+ * @var     {int}       safe_search     - This is a configuration of the API, sets safe search on or off.
+ * @var     {string}    sort            - This is a configuration of the API, sets how the data is sorted upon return
+ * @var     {int}       radius          - This is a configuration of the API, sets the radius from the lat and lon to search for photos
+ * @var     {string}    radius_units    - This is a configuration of the API, sets the unit of measure used for the radius variable.
+ * @var     {int}       content_type    - This is a configuration of the API, sets what type of content is to be returned.
+ * @var     {int}       perPage         - This is a configuration of the API, sets how many results are returned per page.
+ * @var {string}        url             - This holds the URL that is used to pull data from the API, uses all the configuration variables to build the URL.
+ * @return {n/a}            - This function does not return any data.
+ */
 function getFlickrPhotos(pLat, pLon) {
 
     var flickrBaseUrl = 'https://www.flickr.com/services/rest/?method=flickr.photos.search&format=json';
-    var src;
     var apiKey = '6c50d3c0a8cd35d228fd25d74f2f663c';
     var safe_search = 1;
     var sort = 'interestingness-desc';
@@ -284,29 +362,19 @@ function getFlickrPhotos(pLat, pLon) {
 
     var url = flickrBaseUrl + '&api_key=' + apiKey + '&safe_search=' + safe_search + '&sort=' + sort + '&lat=' + pLat + '&lon=' + pLon + '&radius=' + radius + '&radius_units=' + radius_units + '&content_type=' + content_type + '&per_page=' + perPage;
 
-    $.getJSON(url + '&format=json&jsoncallback=?', function(data) {
-        console.log('the length is: ' + data.photos.photo.length);
-        if (data.photos.photo.length > 0) {
-            $.each(data.photos.photo, function(i, item) {
-                src = 'http://farm' + item.farm + '.static.flickr.com/' + item.server + '/' + item.id + '_' + item.secret + '_m.jpg';
-                $('<img/>').attr('src', src).appendTo('#images').wrap('<a href="https://www.flickr.com/photos/' + item.owner + '/' + item.id + '" target="_blank"></a>');
-                if (i === 5) {
-                    $('#images').justifiedGallery({
-                        rowHeight: 70,
-                        margins: 3,
-                        lastRow: 'justify'
-                    });
-                    return false;
-                }
-            });
-        } else {
-            $('#images').append('<p> sadly, there are no images to be found.</p>');
-        }
-    });
+    $.getJSON(url + '&format=json&jsoncallback=?', renderFlikrPhotos);
 }
 
-function getWeather() {
 
+/**
+ * This function is used to call the  simple Weather library / API for using Yahoo weather and render it in a very pretty format.
+ * The library is having issues right now with Yahoo updating their API.  I've commented it out for the time being and will finish
+ * commenting out the function if I decide to use it again.
+ * @return {[type]} [description]
+ */
+
+/*
+function getWeather() {
     // v3.1.0
     //Docs at http://simpleweatherjs.com
     $(document).ready(function() {
@@ -327,8 +395,19 @@ function getWeather() {
         });
     });
 }
+*/
 
 
+/**
+ * initMap() is the callback function used by Google Maps to kick off the whoe app. It centers the map on Gilbert, AZ
+ * because that's where I live and I wanted to.  In the future I could pull the location from the browser if I wanted to.
+ * @var     {object} map            - Contains a google map object.
+ * @var     {object} infoWindow     - Contains the HTML that is used to render information about the drop pins.
+ * @var     {object} autocomplete   - a google places autocomplete object used to assist the user in picking a location on the map
+ * @var     {object} places         - holds the google maps placeService and ties it to the map object
+ * @var     {object} input          - holds the html object (text box) that the users will use to type in their locations
+ * @return  {n/a}                   - This function does not return anything.
+ */
 function initMap() {
 
 
