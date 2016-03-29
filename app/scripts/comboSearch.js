@@ -11,7 +11,8 @@
  *  @var {object} autocomplete      - This variable holds the google maps autocomplete object allowing search results to be passed back to the text box as they are typing.
  *  @var {string} MARKER_PATH       - This variable holds the marker image base url path that we use to display on the map for each place result that is returned from google maps.
  *  @var {object} hostnameRegexp    - This variable holds a Regular expression object used to determine the base URL for places that are returned and displaying the short portion of them.
- *  @var {object} $wikiElem         - This variable holds a jquery object reference to a specific set of HTML on the page.
+ *  @var {object} $wikiElem         - This variable holds a jquery object reference to a specific set of HTML on the page set aside for wiki data.
+ *  @var {object} $imageElem        - This variable holds a jquery object reference to a specific set of HTML on the page set aside for photos.
  */
 var map, places, infoWindow;
 var markers = [];
@@ -19,6 +20,7 @@ var autocomplete;
 var MARKER_PATH = 'https://maps.gstatic.com/intl/en_us/mapfiles/marker_green';
 var hostnameRegexp = new RegExp('^https?://.+?/');
 var $wikiElem = $('#wikipedia-links');
+var $imageElem = $('#images');
 
 //
 
@@ -27,7 +29,6 @@ var $wikiElem = $('#wikipedia-links');
  * When the user selects a city, get the place details for the city and zoom the map in on the city. Then calls
  * the rest of the functions used to
  * @var {object} place      - Holds the results coming back from the autocomplete get place function.
- *
  * @return {n/a}            - This function does not return anything.
  */
 function onPlaceChanged() {
@@ -48,7 +49,7 @@ function onPlaceChanged() {
 /**
  * Search for places in the selected area from autocomplete.
  * @var {object} theSearch  - This variable holds the configuration for the search to be performed (what map bounds to use
- *                          , what types of palces to search, distance from autocorrect result, etc..).
+ *                            , what types of palces to search, distance from autocorrect result, etc..).
  * @return {n/a}            - This function does not return anything and instead calls a function that adds results to an array.
  */
 function search() {
@@ -169,8 +170,8 @@ function addResult(result, i) {
  * @return {n/a} This function does not return anything.
  */
 function clearResults() {
-    $('#images').empty();
-    $('#wikipedia-links').empty();
+    $imageElem.empty();
+    $wikiElem.empty();
     $('#results').empty();
 }
 
@@ -311,15 +312,18 @@ function getWikipediaNearby(thePlace) {
  * @return  {n/a}                   - This function does not return anything.
  */
 function renderFlikrPhotos(data) {
+    var flickrRequestTimeout = setTimeout(function() {
+        $imageElem.text('failed to get flickr photos in a timely fashion.  :( Bummer, I know.');
+    }, 10000);
     var src;
-    var photoLimit = 5
+    var photoLimit = 10;
     if (data.photos.photo.length > 0) {
         $.each(data.photos.photo, function(i, item) {
             src = 'http://farm' + item.farm + '.static.flickr.com/' + item.server + '/' + item.id + '_' + item.secret + '_m.jpg';
             $('<img/>').attr('src', src).appendTo('#images').wrap('<a href="https://www.flickr.com/photos/' + item.owner + '/' + item.id + '" target="_blank"></a>');
-            if (i === photoLimit) {
+            if ( i === (photoLimit -1) ) {
                 // uses the justifiedGallery library for stylizing the returned images.  Documentaiton can be found here: http://miromannino.github.io/Justified-Gallery/
-                $('#images').justifiedGallery({
+                $imageElem.justifiedGallery({
                     rowHeight: 70,
                     margins: 3,
                     lastRow: 'justify'
@@ -327,8 +331,9 @@ function renderFlikrPhotos(data) {
                 return false;
             }
         });
+        clearTimeout(flickrRequestTimeout);
     } else {
-        $('#images').append('<p> sadly, there are no images to be found.</p>');
+        $imageElem.append('<p> sadly, there are no images to be found.</p>');
     }
 }
 
