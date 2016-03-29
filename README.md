@@ -17,6 +17,10 @@ This folder contains all my projects that I worked on as I worked through the cl
 # Daily Notes
 Below is a list of daily notes I kept while working through the project and classroom material.  Enjoy!
 
+## 3/29/2016
+### 1pm
+Realized after submitting it that I missed parts of the ruberic (actually I forgot that a ruberic was even offered!).  I'm going back in and retrofitting with knockout.js.  I also got my review back from the good folks at Udacity and they did a great job of pointing out areas where I can do a better job or missed the boat completely (i.e. implmenting an MVVM framework).
+
 ##3/28/2016
 Finally!!!! I fixed that nagging bug with the clearing of wiki and flickr results!  The clear function was being called as part of the search function but the get results was sometimes coming back first and being pulled on place change.  I moved it into the search function after the clearing of the results and now it's working like a champ!
 
