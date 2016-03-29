@@ -36,9 +36,8 @@ function onPlaceChanged() {
     if (place.geometry) {
         map.panTo(place.geometry.location);
         map.setZoom(15);
-        search();
-        getWikipediaNearby(place);
-        getFlickrPhotos(place.geometry.location.lat(), place.geometry.location.lng());
+        search(place);
+
     } else {
         document.getElementById('autocomplete').placeholder = 'Enter a city';
     }
@@ -52,12 +51,12 @@ function onPlaceChanged() {
  *                            , what types of palces to search, distance from autocorrect result, etc..).
  * @return {n/a}            - This function does not return anything and instead calls a function that adds results to an array.
  */
-function search() {
+function search(thePlace) {
 
     var theSearch = {
         bounds: map.getBounds(),
         types: ['school', 'store', 'food'],
-        radius: 1000
+        radius: 500
     };
 
     /** calls the nearby function of places passing into it the config from theSearch and a callback funciton. */
@@ -89,6 +88,10 @@ function search() {
                 // call the addResult funciton to add each result to the result set for displaying on the page.
                 addResult(results[i], i);
             }
+
+            getWikipediaNearby(thePlace);
+            getFlickrPhotos(thePlace.geometry.location.lat(), thePlace.geometry.location.lng());
+
         }
     });
 
@@ -186,7 +189,7 @@ function clearResults() {
  */
 function buildIWContent(place) {
 
-    document.getElementById('iw-icon').innerHTML = '<img class="hotelIcon"' + 'src=' + place.icon + '/>';
+    document.getElementById('iw-icon').innerHTML = '<img class="hotelIcon"' + 'src=' + place.icon + '>';
     document.getElementById('iw-url').innerHTML = '<b><a href=' + place.url + '>' + place.name + '</a></b>';
     document.getElementById('iw-address').textContent = place.vicinity;
 
@@ -321,7 +324,7 @@ function renderFlikrPhotos(data) {
         $.each(data.photos.photo, function(i, item) {
             src = 'http://farm' + item.farm + '.static.flickr.com/' + item.server + '/' + item.id + '_' + item.secret + '_m.jpg';
             $('<img/>').attr('src', src).appendTo('#images').wrap('<a href="https://www.flickr.com/photos/' + item.owner + '/' + item.id + '" target="_blank"></a>');
-            if ( i === (photoLimit -1) ) {
+            if ( i === photoLimit - 1 ) {
                 // uses the justifiedGallery library for stylizing the returned images.  Documentaiton can be found here: http://miromannino.github.io/Justified-Gallery/
                 $imageElem.justifiedGallery({
                     rowHeight: 70,
