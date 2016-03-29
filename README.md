@@ -2,6 +2,9 @@
 You will develop a single-page application featuring a map of your neighborhood or a neighborhood you would like to visit. You will then add additional functionality to this application, including: map markers to identify popular locations or places you’d like to visit, a search function to easily discover these locations, and a listview to support simple browsing of all locations. You will then research and implement third-party APIs that provide additional information about each of these locations (such as StreetView images, Wikipedia articles, Yelp reviews, etc).
 
 
+##3/28/2016
+Finally!!!! I fixed that nagging bug with the clearing of wiki and flickr results!  The clear function was being called as part of the search function but the get results was sometimes coming back first and being pulled on place change.  I moved it into the search function after the clearing of the results and now it's working like a champ!
+
 ## 3/26/2016
 Issues with the results being cleared after they are rendered.  A timing issues is occuring and I need to figure out how to get around it.  
 
