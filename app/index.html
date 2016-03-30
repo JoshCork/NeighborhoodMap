@@ -62,7 +62,8 @@
             <div class="col-md-4 wikipedia-container">
                 <h2 id="wikipedia-header">Wikipedia Info</h2>
                 <p>Search for a neighborhood above and find relevant Wikipedia articles here!</p>
-                <ul id="wikipedia-links"></ul>
+                <ul data-bind="foreach: WikiItem" id="wikipedia-links"></ul>
+                <li class="article" data-bind="id: pageId"><a data-bind="attr: { href: link, title: title }"></a></li>
             </div>
             <div class="col-md-4">
                 <h2>Drop pins</h2>

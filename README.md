@@ -18,6 +18,11 @@ This folder contains all my projects that I worked on as I worked through the cl
 Below is a list of daily notes I kept while working through the project and classroom material.  Enjoy!
 
 ## 3/29/2016
+### 10pm
+Started work of refactoring to break out into model, view, viewmodel.  Wikipedia has been broken out into it's own view, it's own model, and I have some of the logic started in the viewModel for getWikiArticles.  I've also wired up the index.html page to the view I believe. 
+[] Move wiki feature over and test real data.
+[] Comment out the old code for WIki related stuff in comboSearch.js
+
 ### 1pm
 Realized after submitting it that I missed parts of the ruberic (actually I forgot that a ruberic was even offered!).  I'm going back in and retrofitting with knockout.js.  I also got my review back from the good folks at Udacity and they did a great job of pointing out areas where I can do a better job or missed the boat completely (i.e. implmenting an MVVM framework).
 
