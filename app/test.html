@@ -43,15 +43,11 @@
     </nav>
     <div class="jumbotron">
         <div class="container">
-            <div id="locationField">
-                <input id="autocomplete" class="controls" type="text" placeholder="Search Box">
-            </div>
-            <div id="controls">
-            </div>
-            <div id="map"></div>
+            TESTING
         </div>
     </div>
     <div class="container">
+        <!-- Example row of columns -->
         <div class="row">
             <!-- This is a *view* - HTML markup that defines the appearance of your UI -->
             <p>First name: <strong data-bind="text: firstName"></strong></p>
@@ -64,61 +60,6 @@
                 <input data-bind="value: lastName" />
             </p>
             <button data-bind="click: capitalizeLastName">Go caps</button>
-        </div>
-    </div>
-    <div class="container">
-        <!-- Example row of columns -->
-        <div class="row">
-            <div class="col-md-4 wikipedia-container">
-                <h2 id="wikipedia-header">Wikipedia Info</h2>
-                <p>Search for a neighborhood above and find relevant Wikipedia articles here!</p>
-                <ul data-bind="foreach: articles" id="wikipedia-links">
-                <li class="article" data-bind="id: pageId"><a data-bind="attr: { href: link, title: title }"></a></li>
-                </ul>
-            </div>
-            <div data-bind="foreach: articles">
-                <span data-bind="text: $data"></span>
-            </div>
-            <div class="col-md-4">
-                <h2>Drop pins</h2>
-                <p>Points of interest from your search are displayed here.</p>
-                <div id="listing">
-                    <table id="resultsTable">
-                        <tbody id="results"></tbody>
-                    </table>
-                </div>
-                <div style="display: none">
-                    <div id="info-content">
-                        <table>
-                            <tr id="iw-url-row" class="iw_table_row">
-                                <td id="iw-icon" class="iw_table_icon"></td>
-                                <td id="iw-url"></td>
-                            </tr>
-                            <tr id="iw-address-row" class="iw_table_row">
-                                <td class="iw_attribute_name">Address:</td>
-                                <td id="iw-address"></td>
-                            </tr>
-                            <tr id="iw-phone-row" class="iw_table_row">
-                                <td class="iw_attribute_name">Telephone:</td>
-                                <td id="iw-phone"></td>
-                            </tr>
-                            <tr id="iw-rating-row" class="iw_table_row">
-                                <td class="iw_attribute_name">Rating:</td>
-                                <td id="iw-rating"></td>
-                            </tr>
-                            <tr id="iw-website-row" class="iw_table_row">
-                                <td class="iw_attribute_name">Website:</td>
-                                <td id="iw-website"></td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <h2>Flickr Photos</h2>
-                <p>Photos taken near your neighborhood search.</p>
-                <div id="images"></div>
-            </div>
         </div>
     </div>
     <div class="container">
@@ -166,10 +107,9 @@
     <script src="/bower_components/bootstrap/js/tab.js"></script>
     <!-- endbuild -->
     <!-- build:js scripts/main.js -->
-    <script src="scripts/main.js"></script>
+    <script src="scripts/test.js"></script>
     <!-- <script src="scripts/comboSearch.js"></script> -->
     <!-- endbuild -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDL08JkuDrMQXtF1N3ZRoH32V-4yeOoQzA&libraries=places&callback=initMap" async defer></script>
 </body>
 
 </html>

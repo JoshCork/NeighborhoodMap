@@ -17,6 +17,11 @@ This folder contains all my projects that I worked on as I worked through the cl
 # Daily Notes
 Below is a list of daily notes I kept while working through the project and classroom material.  Enjoy!
 
+
+## 3/31/2016
+### 2pm.
+Okay, finally figured out how to get this all kick started by going back and reviewing my design patterns code and material.  I need to wrap this in a jQuery object and have an init() function that kicks everything off.  At least that's what I finally got to work for the test html and test script I built.  About to refactor my code to make the functions all into function objects that can be called.  
+
 ## 3/29/2016
 ### 10pm
 Started work of refactoring to break out into model, view, viewmodel.  Wikipedia has been broken out into it's own view, it's own model, and I have some of the logic started in the viewModel for getWikiArticles.  I've also wired up the index.html page to the view I believe. 
