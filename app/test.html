@@ -48,11 +48,11 @@
     </div>
     <div class="container">
         <!-- Example row of columns -->
-        <div data-bind="with: currentPerson()" class="row">
+        <div data-bind="with: currentArticle()" class="row">
             <!-- This is a *view* - HTML markup that defines the appearance of your UI -->
-            <p>First name: <strong data-bind="text: firstName"></strong></p>
-            <p>Last name: <strong data-bind="text: lastName"></strong></p>
-            <p>Full name: <strong data-bind="text: fullName"></strong></p>
+            <p>Title: <strong data-bind="text: title"></strong></p>
+            <p>pageId: <strong data-bind="text: pageid"></strong></p>
+            <!-- <p>Link: <strong data-bind="text: link"></strong></p> -->
             <!-- <p>First name:
                 <input data-bind="value: currentPerson.firstName" />
             </p>
@@ -107,7 +107,7 @@
     <script src="/bower_components/bootstrap/js/tab.js"></script>
     <!-- endbuild -->
     <!-- build:js scripts/main.js -->
-    <script src="scripts/test.js"></script>
+    <script src="scripts/testKO.js"></script>
     <!-- <script src="scripts/comboSearch.js"></script> -->
     <!-- endbuild -->
 </body>
