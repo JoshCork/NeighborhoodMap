@@ -8,7 +8,7 @@ function Article(data) {
     this.title = ko.observable(data.title);
     this.pageid = ko.observable(data.pageid);
     this.link = ko.computed(function() {
-        return 'https://en.wikipedia.org/?curid=' + self.pageid;
+        return 'https://en.wikipedia.org/?curid=' + self.pageid();
     });
 };
 
@@ -18,6 +18,8 @@ function AppViewModel() {
     this.articleList = ko.observableArray([]);
     this.currentArticle = ko.observable();
 
+
+    // need to replace this with the place object from google maps.  Baby steps for now.
     var testLat = 33.30616049999999; // was thePlace.geometry.location.lat()
     var testLon = -111.84125019999999; // was thePlace.geometry.location.lng()
 

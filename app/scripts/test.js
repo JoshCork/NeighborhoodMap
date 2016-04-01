@@ -22,7 +22,7 @@ function AppViewModel() {
 
     self.currentPerson = ko.observable(this.personList()[0]);
 
-    console.log('the person is: ' + self.currentPerson().firstNamek);
+    console.log('the person is: ' + self.currentPerson().firstName());
 
     this.capitalizeLastName = function() {
         var currentVal = this.lastName(); // Read the current value

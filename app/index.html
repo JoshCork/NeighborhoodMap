@@ -51,21 +51,7 @@
             <div id="map"></div>
         </div>
     </div>
-    <div class="container">
-        <div class="row">
-            <!-- This is a *view* - HTML markup that defines the appearance of your UI -->
-            <p>First name: <strong data-bind="text: firstName"></strong></p>
-            <p>Last name: <strong data-bind="text: lastName"></strong></p>
-            <p>Full name: <strong data-bind="text: fullName"></strong></p>
-            <p>First name:
-                <input data-bind="value: firstName" />
-            </p>
-            <p>Last name:
-                <input data-bind="value: lastName" />
-            </p>
-            <button data-bind="click: capitalizeLastName">Go caps</button>
-        </div>
-    </div>
+
     <div class="container">
         <!-- Example row of columns -->
         <div class="row">
@@ -166,10 +152,10 @@
     <script src="/bower_components/bootstrap/js/tab.js"></script>
     <!-- endbuild -->
     <!-- build:js scripts/main.js -->
-    <script src="scripts/main.js"></script>
-    <!-- <script src="scripts/comboSearch.js"></script> -->
+    <!-- <script src="scripts/main.js"></script> -->
+    <script src="scripts/comboSearch.js"></script>
     <!-- endbuild -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDL08JkuDrMQXtF1N3ZRoH32V-4yeOoQzA&libraries=places&callback=init" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDL08JkuDrMQXtF1N3ZRoH32V-4yeOoQzA&libraries=places&callback=initMap" async defer></script>
 </body>
 
 </html>

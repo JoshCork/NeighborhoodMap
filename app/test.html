@@ -48,18 +48,10 @@
     </div>
     <div class="container">
         <!-- Example row of columns -->
-        <div data-bind="with: currentArticle()" class="row">
-            <!-- This is a *view* - HTML markup that defines the appearance of your UI -->
-            <p>Title: <strong data-bind="text: title"></strong></p>
-            <p>pageId: <strong data-bind="text: pageid"></strong></p>
-            <!-- <p>Link: <strong data-bind="text: link"></strong></p> -->
-            <!-- <p>First name:
-                <input data-bind="value: currentPerson.firstName" />
-            </p>
-            <p>Last name:
-                <input data-bind="value: currentPerson.lastName" />
-            </p>
-            <button data-bind="click: currentPerson.capitalizeLastName">Go caps</button> -->
+        <div class="row">
+            <u data-bind="foreach: articleList" >
+            <li><a data-bind="attr: {href: link, title: title}, text: title" target="_blank"></a></li>
+            </u>
         </div>
     </div>
     <div class="container">
