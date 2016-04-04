@@ -44,7 +44,9 @@
     <div class="jumbotron">
         <div class="container">
             <div id="locationField">
-                <input id="autocomplete" class="controls" type="text" placeholder="Search Box">
+                <input data-bind="attr: {placeholder: autocompleteBoxPlaceHolder}"  id="autocomplete" class="controls" type="text">
+                <!-- <input id="autocomplete" class="controls" type="text" data-bind="placeAutocomplete: FullAddress, route: Street, locality: Suburb, administrative_area_level_1: State" /> -->
+
             </div>
             <div id="controls">
             </div>
@@ -154,7 +156,7 @@
     <!-- build:js scripts/main.js -->
     <script src="scripts/testKO.js"></script>
     <!-- endbuild -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDL08JkuDrMQXtF1N3ZRoH32V-4yeOoQzA&libraries=places&callback=initMap" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDL08JkuDrMQXtF1N3ZRoH32V-4yeOoQzA&libraries=places&callback=initApp" async defer></script>
 </body>
 
 </html>

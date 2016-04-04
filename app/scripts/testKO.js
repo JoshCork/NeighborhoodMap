@@ -4,6 +4,21 @@ var wikiData = []; //[{ "pageid": 21183674, "ns": 0, "title": "Chandler Center f
 var flickrData = ko.observableArray([]);
 var $imageElem = $('#images');
 
+
+var PlaceModel = function() {
+    self = this;
+
+    this.marker = ko.observable();
+    this.location = ko.observable();
+    this.streetNumber = ko.observable();
+    this.streetName = ko.observable();
+    this.city = ko.observable();
+    this.state = ko.observable();
+    this.postCode = ko.observable();
+    this.country = ko.observable();
+
+};
+
 function Article(data) {
     var self = this;
 
@@ -46,11 +61,13 @@ function AppViewModel() {
      *  @var {object} $imageElem        - This variable holds a jquery object reference to a specific set of HTML on the page set aside for photos.
      */
     var map, places, infoWindow;
+
     var markers = [];
-    this.autocomplete = ko.observable();
     var MARKER_PATH = 'https://maps.gstatic.com/intl/en_us/mapfiles/marker_green';
     var hostnameRegexp = new RegExp('^https?://.+?/');
 
+    this.autocomplete = ko.observable();
+    this.autocompleteBoxPlaceHolder = ko.observable('Search Box');
     this.articleList = ko.observableArray([]);
     this.currentArticle = ko.observable();
     this.photoList = ko.observableArray([]);
@@ -59,6 +76,26 @@ function AppViewModel() {
     // need to replace this with the place object from google maps.  Baby steps for now.
     var testLat = 33.30616049999999; // was thePlace.geometry.location.lat()
     var testLon = -111.84125019999999; // was thePlace.geometry.location.lng()
+
+
+    /**
+     * onPlaceChanged()
+     * When the user selects a city, get the place details for the city and zoom the map in on the city. Then calls
+     * the rest of the functions used to
+     * @var {object} place      - Holds the results coming back from the autocomplete get place function.
+     * @return {n/a}            - This function does not return anything.
+     */
+    function onPlaceChanged() {
+        var place = self.autocomplete.getPlace();
+        if (place.geometry) {
+            map.panTo(place.geometry.location);
+            map.setZoom(15);
+            search(place);
+
+        } else {
+            document.getElementById('autocomplete').placeholder = 'Enter a city';
+        }
+    }
 
 
     /**
@@ -157,12 +194,57 @@ function AppViewModel() {
         }).fail(function(e) { console.log(e) });
     }
 
+    /**
+     * initMap() is the callback function used by Google Maps to kick off the whoe app. It centers the map on Gilbert, AZ
+     * because that's where I live and I wanted to.  In the future I could pull the location from the browser if I wanted to.
+     * @var     {object} map            - Contains a google map object.
+     * @var     {object} infoWindow     - Contains the HTML that is used to render information about the drop pins.
+     * @var     {object} autocomplete   - a google places autocomplete object used to assist the user in picking a location on the map
+     * @var     {object} places         - holds the google maps placeService and ties it to the map object
+     * @var     {object} input          - holds the html object (text box) that the users will use to type in their locations
+     * @return  {n/a}                   - This function does not return anything.
+     */
+    function initMap() {
+
+
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: {
+                lat: 33.3539759,
+                lng: -111.7152599
+            },
+            zoom: 13,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+
+        });
+
+        infoWindow = new google.maps.InfoWindow({
+            content: document.getElementById('info-content')
+        });
+
+        // Create the autocomplete object and associate it with the UI input control.
+        // Restrict the search to the default country, and to place type 'cities'.
+        self.autocomplete = new google.maps.places.Autocomplete(
+            /** @type {!HTMLInputElement} */
+            (
+                document.getElementById('autocomplete')), {
+
+            });
+        places = new google.maps.places.PlacesService(map);
+
+        // Create the search box and link it to the UI element.
+        var input = document.getElementById('autocomplete');
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+        self.autocomplete.addListener('place_changed', onPlaceChanged);
+    };
+
+    initMap();
     getWikipediaNearby('test');
     getFlickrPhotos(testLat, testLon);
 
 }
 
-function initMap() {
+function initApp() {
     console.log('it existis!!!!');
 
     // Activates knockout.js
