@@ -33,6 +33,24 @@ function Photo(data) {
 function AppViewModel() {
     var self = this;
 
+    /**
+     *  Variables scoped to comboSearch.js and used throughout the script.
+     *  @var {object} map               - This variable holds the google map object that is used for mapping.
+     *  @var {object} places            - This variable holds the places service that is tied to map.  Used when searching for a place.
+     *  @var {object} infoWindow        - This variable holds the google maps info window object this is used to display marker info on the map.
+     *  @var {array}  markers           - This variable is an array that holds marker objects returned from the google maps search.
+     *  @var {object} autocomplete      - This variable holds the google maps autocomplete object allowing search results to be passed back to the text box as they are typing.
+     *  @var {string} MARKER_PATH       - This variable holds the marker image base url path that we use to display on the map for each place result that is returned from google maps.
+     *  @var {object} hostnameRegexp    - This variable holds a Regular expression object used to determine the base URL for places that are returned and displaying the short portion of them.
+     *  @var {object} $wikiElem         - This variable holds a jquery object reference to a specific set of HTML on the page set aside for wiki data.
+     *  @var {object} $imageElem        - This variable holds a jquery object reference to a specific set of HTML on the page set aside for photos.
+     */
+    var map, places, infoWindow;
+    var markers = [];
+    this.autocomplete = ko.observable();
+    var MARKER_PATH = 'https://maps.gstatic.com/intl/en_us/mapfiles/marker_green';
+    var hostnameRegexp = new RegExp('^https?://.+?/');
+
     this.articleList = ko.observableArray([]);
     this.currentArticle = ko.observable();
     this.photoList = ko.observableArray([]);
@@ -75,13 +93,10 @@ function AppViewModel() {
                 console.log('I am the error: ' + e);
             }
         }).done(function() {
-
-            console.log('data has been pulled, now parsing the data into articleList')
             wikiData.forEach(function(article) {
                 self.articleList.push(new Article(article));
             });
             self.currentArticle(self.articleList()[0]);
-            console.log('the article is: ' + self.currentArticle().title());
         });
     }
 
@@ -115,19 +130,15 @@ function AppViewModel() {
         var url = flickrBaseUrl + '&api_key=' + apiKey + '&safe_search=' + safe_search + '&sort=' + sort + '&lat=' + pLat + '&lon=' + pLon + '&radius=' + radius + '&radius_units=' + radius_units + '&content_type=' + content_type + '&per_page=' + perPage + '&format=json&jsoncallback=?';
 
         $.getJSON(url, function(data) {
-            console.log('now inside getjson');
             var flickrRequestTimeout = setTimeout(function() {
                 $imageElem.text('failed to get flickr photos in a timely fashion.  :( Bummer, I know.');
             }, 10000);
 
             var photoLimit = 10;
 
-            console.log("photo length is: " + data.photos.photo.length );
-
             if (data.photos.photo.length > 0) {
                 $.each(data.photos.photo, function(i, item) {
                     self.photoList.push(new Photo(item));
-                    console.log('this url is: ' + self.photoList()[i].url());
 
                     if (i === photoLimit - 1) {
                         // uses the justifiedGallery library for stylizing the returned images.  Documentaiton can be found here: http://miromannino.github.io/Justified-Gallery/
@@ -143,18 +154,19 @@ function AppViewModel() {
             } else {
                 alert('sadly, there are no images to be found.');
             }
-        }).fail(function(e){console.log(e )}).done(function(){console.log(self.photoList()[0].url());});
+        }).fail(function(e) { console.log(e) });
     }
 
-    // call getWiki Data
     getWikipediaNearby('test');
     getFlickrPhotos(testLat, testLon);
 
-
-
-
-
 }
 
-// Activates knockout.js
-ko.applyBindings(new AppViewModel())
+function initMap() {
+    console.log('it existis!!!!');
+
+    // Activates knockout.js
+    ko.applyBindings(new AppViewModel())
+
+
+};

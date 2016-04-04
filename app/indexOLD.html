@@ -51,17 +51,19 @@
             <div id="map"></div>
         </div>
     </div>
+
     <div class="container">
         <!-- Example row of columns -->
         <div class="row">
             <div class="col-md-4 wikipedia-container">
                 <h2 id="wikipedia-header">Wikipedia Info</h2>
                 <p>Search for a neighborhood above and find relevant Wikipedia articles here!</p>
-                <u data-bind="foreach: articleList">
-                    <li>
-                        <a data-bind="attr: {href: link, title: title}, text: title" target="_blank"></a>
-                    </li>
-                </u>
+                <ul data-bind="foreach: articles" id="wikipedia-links">
+                <li class="article" data-bind="id: pageId"><a data-bind="attr: { href: link, title: title }"></a></li>
+                </ul>
+            </div>
+            <div data-bind="foreach: articles">
+                <span data-bind="text: $data"></span>
             </div>
             <div class="col-md-4">
                 <h2>Drop pins</h2>
@@ -101,9 +103,7 @@
             <div class="col-md-4">
                 <h2>Flickr Photos</h2>
                 <p>Photos taken near your neighborhood search.</p>
-                <div id="images" data-bind="foreach: photoList">
-                    <a data-bind="attr: {href: attributionLink}" target="_blank"><img data-bind="attr: { src: url }"></a>
-                </div>
+                <div id="images"></div>
             </div>
         </div>
     </div>
@@ -152,7 +152,8 @@
     <script src="/bower_components/bootstrap/js/tab.js"></script>
     <!-- endbuild -->
     <!-- build:js scripts/main.js -->
-    <script src="scripts/testKO.js"></script>
+    <!-- <script src="scripts/main.js"></script> -->
+    <script src="scripts/comboSearch.js"></script>
     <!-- endbuild -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDL08JkuDrMQXtF1N3ZRoH32V-4yeOoQzA&libraries=places&callback=initMap" async defer></script>
 </body>
