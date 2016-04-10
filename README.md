@@ -3,28 +3,37 @@ You will develop a single-page application featuring a map of your neighborhood 
 
 # Launching this project and the repo structure
 ## Launching the project.
-All of my code has been deployed using gulp over to a github pages page.  You can find the working project here: http://joshcork.github.io/NeighborhoodMap/ 
+All of my code has been deployed using gulp over to a github pages page.  You can find the working project here: http://joshcork.github.io/NeighborhoodMap/
 
 ## Repo structure
-I used the Yeoman framework for scaffolding this project.  It was tons of fun trying to figure out how to get GULP to work and how the esLint library worked.  I was able to set up some automatic deployment to my github.io page.  
-Everything you see in the repo besides the Classroom maaterial folder was scaffolded using the Yeoman web app generator. My working Neighborhood Map project is in the /app folder.  In there you will find the main javascript file that i'm using for all the scripting and API calls.  The file is called comboSearch.js.  I've tried to thoroughly document everything.  In looking back through my notes from last year I probably should have separated things out a bit into a more manageable design pattern like MVC but didn't think about that until just now.  If it's required to meet expectations on this project I can go back and do that. 
+I used the Yeoman framework for scaffolding this project.  It was tons of fun trying to figure out how to get GULP to work and how the esLint library worked.  I was able to set up some automatic deployment to my github.io page.
+Everything you see in the repo besides the Classroom maaterial folder was scaffolded using the Yeoman web app generator. My working Neighborhood Map project is in the /app folder.  In there you will find the main javascript file that i'm using for all the scripting and API calls.  The file is called comboSearch.js.  I've tried to thoroughly document everything.  In looking back through my notes from last year I probably should have separated things out a bit into a more manageable design pattern like MVC but didn't think about that until just now.  If it's required to meet expectations on this project I can go back and do that.
 
-I'm using GULP to build the project and to deploy I just have to run the gulp deploy command!  
+I'm using GULP to build the project and to deploy I just have to run the gulp deploy command!
 
 ### ClassroomMaterial
-This folder contains all my projects that I worked on as I worked through the class material.  Each class has it's own readme file that I've consolidated below for your viewing pleasure.  
+This folder contains all my projects that I worked on as I worked through the class material.  Each class has it's own readme file that I've consolidated below for your viewing pleasure.
 
 # Daily Notes
 Below is a list of daily notes I kept while working through the project and classroom material.  Enjoy!
 
+## 4/9/2016
+### 11pm
+Getting stuck on the marker not working.  It's coming back with an error that says: 'testKO.js:108 Uncaught TypeError: Cannot read property 'setMap' of undefined'.  I changed this.marker to be a simple variable instead of a ko.observable because it kept telling me that marker() was not a function.  
+
+Need to pick up here tomorrow. 
+
+### 9pm
+Trying to figure out where I left off.  Last Monday (4/4/16) I came down with a terrible terrible flu. I was in bed for four straight days.  Even today I only have about half of my energy and still get very weak and tired just sitting here working on the computer.
+
 
 ## 3/31/2016
 ### 2pm.
-Okay, finally figured out how to get this all kick started by going back and reviewing my design patterns code and material.  I need to wrap this in a jQuery object and have an init() function that kicks everything off.  At least that's what I finally got to work for the test html and test script I built.  About to refactor my code to make the functions all into function objects that can be called.  
+Okay, finally figured out how to get this all kick started by going back and reviewing my design patterns code and material.  I need to wrap this in a jQuery object and have an init() function that kicks everything off.  At least that's what I finally got to work for the test html and test script I built.  About to refactor my code to make the functions all into function objects that can be called.
 
 ## 3/29/2016
 ### 10pm
-Started work of refactoring to break out into model, view, viewmodel.  Wikipedia has been broken out into it's own view, it's own model, and I have some of the logic started in the viewModel for getWikiArticles.  I've also wired up the index.html page to the view I believe. 
+Started work of refactoring to break out into model, view, viewmodel.  Wikipedia has been broken out into it's own view, it's own model, and I have some of the logic started in the viewModel for getWikiArticles.  I've also wired up the index.html page to the view I believe.
 [] Move wiki feature over and test real data.
 [] Comment out the old code for WIki related stuff in comboSearch.js
 
@@ -35,35 +44,35 @@ Realized after submitting it that I missed parts of the ruberic (actually I forg
 Finally!!!! I fixed that nagging bug with the clearing of wiki and flickr results!  The clear function was being called as part of the search function but the get results was sometimes coming back first and being pulled on place change.  I moved it into the search function after the clearing of the results and now it's working like a champ!
 
 ## 3/26/2016
-Issues with the results being cleared after they are rendered.  A timing issues is occuring and I need to figure out how to get around it.  
+Issues with the results being cleared after they are rendered.  A timing issues is occuring and I need to figure out how to get around it.
 
-## 3/24/2016 
+## 3/24/2016
 ### 10pm
 
 - Fixed Wiki links
 - Fixed the dropping of the menu (related to how I was clearing wiki results).
-- Still need to figure out the lag / no show of the dat asome times. 
-- Weather still needs to be worked. 
-- Still need to properly clear the Wikipedia Links - need to change how the appending is happening. 
+- Still need to figure out the lag / no show of the dat asome times.
+- Weather still needs to be worked.
+- Still need to properly clear the Wikipedia Links - need to change how the appending is happening.
 
 ### 4pm
 All the basic features are now working and I can now deploy via Gulp using 'Gulp Deploy'.  Stuff that still needs to be done:
 
 - Wikipedia links are currently not working right if there is a space in the name
-- Sometimes the search doesn't provide Wikipedia info or Flickr photos until the second time you search for it. 
-- For some reason after searching the rest of the menu options at the top go away (about us, contact us, etc..). 
-- Weather is not working properly or incorporated correctly. 
+- Sometimes the search doesn't provide Wikipedia info or Flickr photos until the second time you search for it.
+- For some reason after searching the rest of the menu options at the top go away (about us, contact us, etc..).
+- Weather is not working properly or incorporated correctly.
 
 ## 3/23/2016
-Trying to deploy to gh-pages is easy once I get the project to build.  Need to pick up tomorrow getting gulp to build the project w/out errors and create the distribution.  Right now there are errors with jquery. 
+Trying to deploy to gh-pages is easy once I get the project to build.  Need to pick up tomorrow getting gulp to build the project w/out errors and create the distribution.  Right now there are errors with jquery.
 
-Updated the look and feel.  Added in a new library for pulling weather but need to add that to the UI next.  Created a gh-pages branch but it doesn't seem to be working for some reason.  Need to pick up here tomorrow getting the weather component ui element working and displayed where I want it.  Other thigns I may want to do is to pull the first paragraph from Wikipedia for a location and place that somewhere.   
+Updated the look and feel.  Added in a new library for pulling weather but need to add that to the UI next.  Created a gh-pages branch but it doesn't seem to be working for some reason.  Need to pick up here tomorrow getting the weather component ui element working and displayed where I want it.  Other thigns I may want to do is to pull the first paragraph from Wikipedia for a location and place that somewhere.
 
 
 ## 3/22/2016
-Explored a bunch of API's today.  Can't seem to get the realestate service I was going to use to work because of an issue with cross site scripting and local host.  Tomorrow I'm going to pick up with Yahoo weather and I requested a key to a service that will give average rental prices for a give city / state combination.  I think that will be good enough to round it out as an example of what can be done. 
+Explored a bunch of API's today.  Can't seem to get the realestate service I was going to use to work because of an issue with cross site scripting and local host.  Tomorrow I'm going to pick up with Yahoo weather and I requested a key to a service that will give average rental prices for a give city / state combination.  I think that will be good enough to round it out as an example of what can be done.
 
-So, um yeah.... after about a year away from this stuff I'm back at it. Lots of stuff has happened in the last year with highs including crazy Awesome job moves and extreme low's including dad passingn away.  I'm so happy to be back at this stuff again.  It's tons of fun and makes me feel like i'm really stretching my brain! 
+So, um yeah.... after about a year away from this stuff I'm back at it. Lots of stuff has happened in the last year with highs including crazy Awesome job moves and extreme low's including dad passingn away.  I'm so happy to be back at this stuff again.  It's tons of fun and makes me feel like i'm really stretching my brain!
 
 -------
 
@@ -71,28 +80,28 @@ So, um yeah.... after about a year away from this stuff I'm back at it. Lots of 
 # JavaScript Design Patterns
 
 ## 5/4/2015 - May the 4th be with you
-Moved on to refactoring my resume project.  Strange  -  The resume project itself was not in the lcoation I expected.  It's under udacity but not named by it's own repo github name.  Instead it's just named frontend-nanodegree-resume.  I created a branch called mvcRefactor and I'm working off of that.  I'll update my key leanrings here. 
+Moved on to refactoring my resume project.  Strange  -  The resume project itself was not in the lcoation I expected.  It's under udacity but not named by it's own repo github name.  Instead it's just named frontend-nanodegree-resume.  I created a branch called mvcRefactor and I'm working off of that.  I'll update my key leanrings here.
 
 ## 4/27/2015
-Not to bad at all.  I think i had the basic framework in place.  Most of my time and energy comes from trying to apply what I've learned to the REDDIT API version of this app that I've created where the data isn't something I've created and can change all the time.  It's pretty awesome though!  
+Not to bad at all.  I think i had the basic framework in place.  Most of my time and energy comes from trying to apply what I've learned to the REDDIT API version of this app that I've created where the data isn't something I've created and can change all the time.  It's pretty awesome though!
 
 Other stuff I wasn't sure about:
 Again - i'm not sure that what I'm putting in the model is appropriate?
-I feel like I could do some refactoring and save some processing that is currently unncessary.  For instance in the jumboView controller I was calling the getAllKittens function and then using that data stored into an array.  I caught myself doing the same thing to call a getKittenClicks function when I already had the whole object stored in an array. 
+I feel like I could do some refactoring and save some processing that is currently unncessary.  For instance in the jumboView controller I was calling the getAllKittens function and then using that data stored into an array.  I caught myself doing the same thing to call a getKittenClicks function when I already had the whole object stored in an array.
 
 ## 4/21/2015
-Finished moving kittenClick over to MVO.  I had some trouble deciding where to put my functions.  For instance the function that gets the Reddit data - is that part of the model (only for storing data and returning it when called), or part of the Octopus - responsible for calling out to the API.  In the end I put it in the model function and pull it on Init.  
+Finished moving kittenClick over to MVO.  I had some trouble deciding where to put my functions.  For instance the function that gets the Reddit data - is that part of the model (only for storing data and returning it when called), or part of the Octopus - responsible for calling out to the API.  In the end I put it in the model function and pull it on Init.
 
-I wanted to add the data to local storage and because of that I had to make some modifications to that to make it work well.  I had to add a function that checks to see if every item stored in the data object was a new item or an item I had already pulled from reddit.  If it is something that I already have I disregard it.  
+I wanted to add the data to local storage and because of that I had to make some modifications to that to make it work well.  I had to add a function that checks to see if every item stored in the data object was a new item or an item I had already pulled from reddit.  If it is something that I already have I disregard it.
 
-I'm not sure on the efficiency of what i'm doing as it seems like i'm reading and writing the local storage constantly. 
+I'm not sure on the efficiency of what i'm doing as it seems like i'm reading and writing the local storage constantly.
 
 Also, i have my view calling localStorage directly and i'm not sure if that is the right thing to do or not?  Am i breaking the paradigm that way?
 
-Aside from makeing those modifications this exercise wasn't terribly difficult. 
+Aside from makeing those modifications this exercise wasn't terribly difficult.
 
 ## 4/20/2015
-Working but have some bugs see notes on most recent commit. 
+Working but have some bugs see notes on most recent commit.
 
 Instructors notes:
 Resources
@@ -101,7 +110,7 @@ Check out the earlier reading node on [how to deal with event listeners and clos
 
 ## 4/17/2015
 Working: Cat Clicker Premium
-That was much musch easier because of the work I put in for the first version.  I modifed my loop that works through the valid reddit images that are returned and had that append those rows to a right side navigation.  I place the thumbnails in the right side nav and when they click on that I modified clickwatch to updated the jumbotron with a title,image, and click count. 
+That was much musch easier because of the work I put in for the first version.  I modifed my loop that works through the valid reddit images that are returned and had that append those rows to a right side navigation.  I place the thumbnails in the right side nav and when they click on that I modified clickwatch to updated the jumbotron with a title,image, and click count.
 
 ## 4/16/2015
 
@@ -158,11 +167,11 @@ Let's cut out the irrelevant code so we can see what's going on. The comments be
             // ... alert num's value at the moment of the click!
             alert(num);
 
-            // Specifically, we're alerting the num variable 
+            // Specifically, we're alerting the num variable
             // that's defined outside of this inner function.
             // Each of these inner functions are pointing to the
             // same `num` variable... the one that changes on
-            // each iteration, and which equals 3 at the end of 
+            // each iteration, and which equals 3 at the end of
             // the for loop.  Whenever the anonymous function is
             // called on the click event, the function will
             //  reference the same `num` (which now equals 3).
@@ -185,7 +194,7 @@ Let's simplify the code to just the lines where we add the event listener.
         alert(num);
 
     });
-    
+
 The num variable changes, so we have to somehow connect it to our event listener function. Here's one way of doing it. First take a look at this code, then I'll explain how it works.
 
     elem.addEventListener('click', (function(numCopy) {
@@ -233,23 +242,23 @@ Here's our original code, but fixed up with our closure trick. Test it out!
 
 #### WORKING!!!!
 OMG!  Finally got it working.  After some sleep last night and noodling on this a bit I figured it out.
-I can now send any number of images to the UI (well... i'll need to start wrapping the rows after three) and I can now keep track of the number of clicks independently of each image. 
+I can now send any number of images to the UI (well... i'll need to start wrapping the rows after three) and I can now keep track of the number of clicks independently of each image.
 
-I've been working on this since I left for Oregon on Tuesday afternoon.  Frustrating with terrible connectivity on the plan and in the hotel room.  I kept trying to pull this up as I was in the keynote sessions and they were getting boring... had to force myself back into listening to sessions themselves.  
+I've been working on this since I left for Oregon on Tuesday afternoon.  Frustrating with terrible connectivity on the plan and in the hotel room.  I kept trying to pull this up as I was in the keynote sessions and they were getting boring... had to force myself back into listening to sessions themselves.
 
-I was having a few problems and I was actually very close a couple of times... lack of sleep and time to work / think through what was happening was tripping me up.  I was calling the function for each line of HTML that I inserted and trying to watch that specific image but it didn't seem to be working. Turns out it was but it was also just declaring the variable and resetting it each time.  After thinking through it a bit this morning I realized what I was doing and started storing my counter in the same array where I was storing my image URLs and ids.  I gave each div that contained the image it's own unique id from reddit and then called back the click count from that array of JSON objects that stored the URL,ID, permalink, etc...  When a user clicks on an image i write back to that same array with the click count to track it there.  
+I was having a few problems and I was actually very close a couple of times... lack of sleep and time to work / think through what was happening was tripping me up.  I was calling the function for each line of HTML that I inserted and trying to watch that specific image but it didn't seem to be working. Turns out it was but it was also just declaring the variable and resetting it each time.  After thinking through it a bit this morning I realized what I was doing and started storing my counter in the same array where I was storing my image URLs and ids.  I gave each div that contained the image it's own unique id from reddit and then called back the click count from that array of JSON objects that stored the URL,ID, permalink, etc...  When a user clicks on an image i write back to that same array with the click count to track it there.
 ## 4/12/2015
 ### KittenClicker Rev 2
 Okay, so I spent the last several days while working on this app figuring out how to pull images from Reddit's JSON API into my web application and then display them side by side on the page.  I had a few things that I wanted to be able to accomplish:
 
 1. Pull images from a specific subreddit: r/catpictures
-2. Iterate through the object returned with links to pictures and pull out only the ones that linked to valid images. 
-3. Display two randomly selected images from all the images returned on my page. 
+2. Iterate through the object returned with links to pictures and pull out only the ones that linked to valid images.
+3. Display two randomly selected images from all the images returned on my page.
 
-I was able to accomplish all of the above.  It took a very long time.  Getting the images from Reddit was easy but then iterating through them and understanding when the $.each() was complete so I could randomize the array that i was placing the valid images into was a big challenge.  I was doing this iteration and getting of the pictures in the script w/out placing it in a function and for some reason it seemed like when I did a console log of the array after the $.ajax request  function it would immediately log the empty array before it was finished loading.  This was maddening and messed around with making a synchronous call to reddit instead of asnch.  It took me forever to figure out and i'm still not sure why the behavior is as it iwas but as long as I would place the .ajax() request into a function (called getRedditPictures) it respected the synchronous nature of the $.each() function.  After that I refactored quite a bit of the nonsense I was doing trying to work around that issue or understand it.  
+I was able to accomplish all of the above.  It took a very long time.  Getting the images from Reddit was easy but then iterating through them and understanding when the $.each() was complete so I could randomize the array that i was placing the valid images into was a big challenge.  I was doing this iteration and getting of the pictures in the script w/out placing it in a function and for some reason it seemed like when I did a console log of the array after the $.ajax request  function it would immediately log the empty array before it was finished loading.  This was maddening and messed around with making a synchronous call to reddit instead of asnch.  It took me forever to figure out and i'm still not sure why the behavior is as it iwas but as long as I would place the .ajax() request into a function (called getRedditPictures) it respected the synchronous nature of the $.each() function.  After that I refactored quite a bit of the nonsense I was doing trying to work around that issue or understand it.
 
 #### Key Learnings:
-- a better grasp on what a callback function is - but it's still a little fuzzy for me. 
+- a better grasp on what a callback function is - but it's still a little fuzzy for me.
 - a better understanding of pulling random items out of an array (be sure to click on the visuallization link on this page: http://bit.ly/1CFUQZF).
 - a familiarity with reddit's api
 
@@ -259,26 +268,26 @@ I was able to accomplish all of the above.  It took a very long time.  Getting t
     + Attribution name.
     + Backlink to the origintal post.
     + Image Title
-- Set up the page better to give me additional rows of data depending on the size of the array and paging if needed. 
-- Change the layout to a two column layout. 
+- Set up the page better to give me additional rows of data depending on the size of the array and paging if needed.
+- Change the layout to a two column layout.
 
 #### Things I would still like to do:
 - Pull test each url that wasn't a valid image and see if it is a link to another image website and pull that in.
 - Toggle the image service (reddit vs. flickr for instance).
-- Toggle the subReddit that you are searching from. 
-- Store the image URL as a key along with total number of clicks in a database and keep that click history for all pictures. 
+- Toggle the subReddit that you are searching from.
+- Store the image URL as a key along with total number of clicks in a database and keep that click history for all pictures.
 
 ## 4/7/2015
 ### KittenClicker Reflectons
 #### How hard was this exercise?
-Not that hard, it was fun... a neat challenge.  I think if I had just gone after the easy stuff first it would have been simple.  Instead I spent a couple of hours having fun going through the Flickr API as well as the Reddit API and experimenting.  In the end I figured out how to pull images out of a subreddit and then diplay them on a page.  My thought was to do this and add images to an array and select from that array a random cat picture and have a click on that random picture.  I would store the number of clicks per image and display them on the image in meme lettering format stolen from the project three work I did.  
+Not that hard, it was fun... a neat challenge.  I think if I had just gone after the easy stuff first it would have been simple.  Instead I spent a couple of hours having fun going through the Flickr API as well as the Reddit API and experimenting.  In the end I figured out how to pull images out of a subreddit and then diplay them on a page.  My thought was to do this and add images to an array and select from that array a random cat picture and have a click on that random picture.  I would store the number of clicks per image and display them on the image in meme lettering format stolen from the project three work I did.
 
 #### How do you feel about your code?
 Meh.  I didn't put a lot of time into it.  I pulled and modified the javascrip from a jsFiddle I found: http://jsfiddle.net/ots6jdyL/
 
-I used a bootsrap template / example from the bootstrap getting started site.  I didn't do any optimizations and didn't spend any time trying to make it pretty. 
+I used a bootsrap template / example from the bootstrap getting started site.  I didn't do any optimizations and didn't spend any time trying to make it pretty.
 
-There are lots of things that i would like to do per the above note but didn't spend the time on it. 
+There are lots of things that i would like to do per the above note but didn't spend the time on it.
 
 #### How many times did you click on you picture?
  - 18, yes... eighteen amazing times! :)
@@ -289,10 +298,10 @@ There are lots of things that i would like to do per the above note but didn't s
 # Lesson 1
 
 ## 3/29/2015
-I completed the coursework.  Somethign that needs more time invstedin it if i were to actually build the application would be the NYT Articles: Right now the content is kind of crap if you search for Phoenix, AZ for instance or just Phoenix.  
+I completed the coursework.  Somethign that needs more time invstedin it if i were to actually build the application would be the NYT Articles: Right now the content is kind of crap if you search for Phoenix, AZ for instance or just Phoenix.
 
 ## 3/28/2015
-I've made good progress today.  I've decided that the search results from just doing a regular query search of wikipedia provided terrible results.  A search for "Phoenix, AZ" returned reall obscure results.  I choose instead to use a geo search and provide the Wikipedia API a latitude / longitude for the city i was searching for.  To do this i had to use the Google GeoCode API and pass the city along and get back the lat/lon.  
+I've made good progress today.  I've decided that the search results from just doing a regular query search of wikipedia provided terrible results.  A search for "Phoenix, AZ" returned reall obscure results.  I choose instead to use a geo search and provide the Wikipedia API a latitude / longitude for the city i was searching for.  To do this i had to use the Google GeoCode API and pass the city along and get back the lat/lon.
 
 ## 3/24/2015
 
@@ -323,17 +332,17 @@ Your application loads up a script from the other domain using a simple `<script
 You’ll need to refer to the documentation for any data API’s you want to use, and figure out if the API supports CORS or if you need to use JSON-P.
 
 #### Error Handling
-In my error handler method (using chaining) i could have passed the error to the function and logged it out by convention using the variable "e".  
+In my error handler method (using chaining) i could have passed the error to the function and logged it out by convention using the variable "e".
 
 So instead of looking like this:
-    
-     }).error(function(){        
+
+     }).error(function(){
         $nytHeaderElem.text('New York Times Articles: Booo. Could not retrieve articles.');
     });
 
 It could have looked like this:
 
-     }).error(function(e){        
+     }).error(function(e){
         $nytHeaderElem.text('New York Times Articles: Booo. Could not retrieve articles.');
         console.log("your error was: " + JSON.stringify(e));
     });
@@ -342,9 +351,9 @@ It could have looked like this:
 #### Building the Move Planner App --> NYT Implementation
 Interesting approach by the instructor that differed from my own.  He created an articles variable and assigned the array from the NYT response to that array.  Something like: `var articles = data.response.docs`.  Instead I just iterated through the response and pushed the html (along with the key, url, and headline) into an items array:
 
-    $.each(data.response.docs,function(key,val) {   
+    $.each(data.response.docs,function(key,val) {
                 items.push(
-                    "<li id='" + key + "'><a href='" + this.web_url + "' target='_blank'>" + this.headline.main + "</a>" + "<p>" + this.snippet + "</p>" + "</li>");                
+                    "<li id='" + key + "'><a href='" + this.web_url + "' target='_blank'>" + this.headline.main + "</a>" + "<p>" + this.snippet + "</p>" + "</li>");
          });
 
 
@@ -401,7 +410,7 @@ Click "Continue to Quiz" when you're ready to identify some more examples!
 
 Vocabulary
 
-**Callback** - Instruction set that will be executed when the RESPONSE is receieved from the GET request. 
+**Callback** - Instruction set that will be executed when the RESPONSE is receieved from the GET request.
 
 GET Request: An internet request for data. Sent from a client to a server.
 

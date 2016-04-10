@@ -5,17 +5,36 @@ var flickrData = ko.observableArray([]);
 var $imageElem = $('#images');
 
 
-var PlaceModel = function() {
+var PlaceModel = function(myPlace, position) {
     self = this;
 
-    this.marker = ko.observable();
-    this.location = ko.observable();
-    this.streetNumber = ko.observable();
-    this.streetName = ko.observable();
-    this.city = ko.observable();
-    this.state = ko.observable();
-    this.postCode = ko.observable();
-    this.country = ko.observable();
+    this.MARKER_PATH = 'https://maps.gstatic.com/intl/en_us/mapfiles/marker_green';
+
+
+    this.placeId = ko.observable(myPlace.place_id);
+    this.orderId = ko.observable(position);
+    this.location = ko.observable(myPlace.geometry.location);
+    this.lat = ko.observable(myPlace.geometry.location.lat());
+    this.lng = ko.observable(myPlace.geometry.location.lng());
+    this.markerLetter = ko.observable(String.fromCharCode('A'.charCodeAt(0) + self.orderId()));
+    this.markerIcon = ko.computed(function() {
+        return self.MARKER_PATH + self.markerLetter() + '.png'; });
+    this.name = ko.observable(myPlace.name);
+    this.rating = ko.observable(myPlace.rating);
+    this.styleBgColor = ko.computed(function() {
+        return self.orderId() % 2 === 0 ? '#F0F0F0' : '#FFFFFF'; });
+    this.vicinity = ko.observable(myPlace.vicinity);
+    this.phoneNumber = ko.observable(myPlace.formated_phone_number);
+    this.icon = ko.observable(myPlace.icon);
+    this.marker = ko.observable(new google.maps.Marker({
+                        position: self.location(),
+                        animation: google.maps.Animation.DROP,
+                        icon: self.markerIcon()
+                    }));
+
+
+    //todo: need to add onlick function here????
+
 
 };
 
@@ -62,8 +81,8 @@ function AppViewModel() {
      */
     var map, places, infoWindow;
 
-    var markers = [];
-    var MARKER_PATH = 'https://maps.gstatic.com/intl/en_us/mapfiles/marker_green';
+
+
     var hostnameRegexp = new RegExp('^https?://.+?/');
 
     this.autocomplete = ko.observable();
@@ -71,11 +90,27 @@ function AppViewModel() {
     this.articleList = ko.observableArray([]);
     this.currentArticle = ko.observable();
     this.photoList = ko.observableArray([]);
+    this.placeList = ko.observableArray([]);
+    this.markerList = ko.observableArray([]);
+    //this.baseLocation = new PlaceModel();
+
+
 
 
     // need to replace this with the place object from google maps.  Baby steps for now.
     var testLat = 33.30616049999999; // was thePlace.geometry.location.lat()
     var testLon = -111.84125019999999; // was thePlace.geometry.location.lng()
+
+
+    /** Called for each marker in the markers array and places that marker on the map.
+    markers are dropped onto the map based on the configuration specified when the marker
+    was created in the search function.
+    **/
+    function dropMarker(i) {
+        return function() {
+            self.placeList()[i].marker().setMap(map);
+        };
+    }
 
 
     /**
@@ -95,6 +130,78 @@ function AppViewModel() {
         } else {
             document.getElementById('autocomplete').placeholder = 'Enter a city';
         }
+    }
+
+    /**
+     * Search for places in the selected area from autocomplete.
+     * @var {object} theSearch  - This variable holds the configuration for the search to be performed (what map bounds to use
+     *                            , what types of palces to search, distance from autocorrect result, etc..).
+     * @return {n/a}            - This function does not return anything and instead calls a function that adds results to an array.
+     */
+    function search(thePlace) {
+
+        var theSearch = {
+            bounds: map.getBounds(),
+            types: ['school', 'store', 'food'],
+            radius: 500
+        };
+
+        /** calls the nearby function of places passing into it the config from theSearch and a callback funciton. */
+        places.nearbySearch(theSearch, function(results, status) {
+            if (status === google.maps.places.PlacesServiceStatus.OK) {
+
+                // shouldn't have to do this because they should be bound using KO
+                // first clear all markers and results.
+                // clearResults();
+                // clearMarkers();
+
+                // Create a marker for each place that is found, and
+                // assign a letter of the alphabet to each marker icon.
+                for (var i = 0; i < results.length; i++) {
+
+                    // Done as part of the placeModel
+                    // Use marker animation to drop the icons incrementally on the map.
+                    // markers[i] = new google.maps.Marker({
+                    //     position: results[i].geometry.location,
+                    //     animation: google.maps.Animation.DROP,
+                    //     icon: markerIcon
+                    // });
+
+                    // If the user clicks a place marker, show the details of that place
+                    // in an info window.
+                    self.placeList.push(new PlaceModel(results[i],i));
+                    // self.markerList.push(new google.maps.Marker({
+                    //     position: results[i].geometry.location,
+                    //     animation: google.maps.Animation.DROP,
+                    //     icon: self.placeList()[i].markerIcon()
+                    // })
+                    // );
+
+                    console.log('this markerLetter: ' + self.placeList()[i].markerLetter());
+                    console.log('this markerIcon: ' + self.placeList()[i].markerIcon());
+
+                    setTimeout(dropMarker(i), i * 100);
+
+
+
+
+                    // todo: Figure out how to incorporate the below
+                    // google.maps.event.addListener(markers[i], 'click', showInfoWindow);
+                    // setTimeout(dropMarker(i), i * 100);
+
+                    // call the addResult funciton to add each result to the result set for displaying on the page.
+                    // addResult(results[i], i);
+
+
+                }
+
+                //getWikipediaNearby(thePlace);
+                //getFlickrPhotos(thePlace.geometry.location.lat(), thePlace.geometry.location.lng());
+
+            }
+        });
+
+
     }
 
 
