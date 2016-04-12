@@ -45,7 +45,7 @@
     <div class="jumbotron">
         <div class="container">
             <div id="locationField">
-                <input data-bind="attr: {placeholder: autocompleteBoxPlaceHolder}" id="autocomplete" class="controls" type="text">
+                <input id="autocomplete" class="controls" type="text">
                 <!-- <input id="autocomplete" class="controls" type="text" data-bind="placeAutocomplete: FullAddress, route: Street, locality: Suburb, administrative_area_level_1: State" /> -->
             </div>
             <div id="controls">
@@ -55,6 +55,17 @@
     </div>
     <div class="container">
         <!-- Example row of columns -->
+        <div class="row">
+            <div class="col-md-12">
+                <input id="dataFilter" data-bind="value: query, valueUpdate: 'keyup'" class="controls" type="text">
+            </div>
+            <div>
+                <h3>Search results:</h3>
+                <ul data-bind="foreach: searchResults">
+                    <li data-bind="text: name"></li>
+                </ul>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-4 wikipedia-container">
                 <h2 id="wikipedia-header">Wikipedia Info</h2>
@@ -71,7 +82,7 @@
                 <div id="listing">
                     <table id="resultsTable">
                         <tbody id="results" data-bind="foreach: placeList">
-                            <tr data-bind="click: $root.ahClickIt, attr: { bgcolor: styleBgColor }" >
+                            <tr data-bind="click: $root.ahClickIt, attr: { bgcolor: styleBgColor }">
                                 <td>
                                     <img data-bind="attr: { src: markerIcon }" class="placeIcon" classname="placeIcon">
                                 </td>

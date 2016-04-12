@@ -132,14 +132,23 @@ function AppViewModel() {
 
     var bounds = new google.maps.LatLngBounds();
 
-    this.autocomplete = ko.observable();
-    this.autocompleteBoxPlaceHolder = ko.observable('Search Box');
+    this.autocompleteBoxPlaceHolder = ko.observable();
     this.articleList = ko.observableArray([]);
     this.currentArticle = ko.observable();
     this.photoList = ko.observableArray([]);
     this.placeList = ko.observableArray([]);
     this.currentPlace = ko.observable();
     this.basePlace = ko.observable();
+    this.query = ko.observable('');
+
+
+
+    this.searchResults = ko.computed(function() {
+        var q = self.query();
+        return self.placeList().filter(function(i) {
+            return i.name().toLowerCase().indexOf(q) >= 0;
+        });
+    });
 
     // raise the click event for the marker that is represented when a table row that is clicked
     self.ahClickIt = function(i) {
@@ -153,8 +162,6 @@ function AppViewModel() {
     function dropMarker(i) {
         return function() {
             self.placeList()[i].marker().setMap(map);
-
-
         };
     }
 
@@ -191,10 +198,12 @@ function AppViewModel() {
             map.setZoom(15);
             self.basePlace(new PlaceModel(place));
             search();
+            console.log(self.autocompleteBoxPlaceHolder());
 
         } else {
             document.getElementById('autocomplete').placeholder = 'Enter a city';
         }
+
     }
 
     /**
@@ -357,7 +366,8 @@ function AppViewModel() {
             } else {
                 alertify.alert("Sadly there are no photos in the area that are public.");
             }
-        }).fail(function(e) { console.log(e); alertify.alert("Flickr Data is not available."); });
+        }).fail(function(e) { console.log(e);
+            alertify.alert("Flickr Data is not available."); });
     }
 
     /**
