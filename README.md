@@ -17,6 +17,12 @@ This folder contains all my projects that I worked on as I worked through the cl
 # Daily Notes
 Below is a list of daily notes I kept while working through the project and classroom material.  Enjoy!
 
+## 4/11/2016 
+### 10pm
+Everything has been convered over to KnockoutJS. 
+Now I need to run through the graders' recommendations.  Also, i'm having a problem with it not deploying to my GHPages correctly.  Says it is missing the InitApp function.  Not sure what is going on there because it works just fine when I run it locally using Gulp Serve.  Need to figure that out tomorrow too. 
+
+
 ## 4/9/2016
 ### 11pm
 Getting stuck on the marker not working.  It's coming back with an error that says: 'testKO.js:108 Uncaught TypeError: Cannot read property 'setMap' of undefined'.  I changed this.marker to be a simple variable instead of a ko.observable because it kept telling me that marker() was not a function.  
