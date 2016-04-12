@@ -130,6 +130,8 @@ function AppViewModel() {
      */
     var map, places, infoWindow;
 
+    var bounds = new google.maps.LatLngBounds();
+
     this.autocomplete = ko.observable();
     this.autocompleteBoxPlaceHolder = ko.observable('Search Box');
     this.articleList = ko.observableArray([]);
@@ -151,6 +153,8 @@ function AppViewModel() {
     function dropMarker(i) {
         return function() {
             self.placeList()[i].marker().setMap(map);
+
+
         };
     }
 
@@ -169,6 +173,7 @@ function AppViewModel() {
         self.placeList.removeAll();
         self.articleList.removeAll();
         self.photoList.removeAll();
+        bounds = new google.maps.LatLngBounds();
     }
 
 
@@ -240,6 +245,8 @@ function AppViewModel() {
                     self.placeList.push(new PlaceModel(results[i], i));
                     google.maps.event.addListener(self.placeList()[i].marker(), 'click', showInfoWindow);
                     setTimeout(dropMarker(i), i * 100);
+                    bounds.extend(results[i].geometry.location);
+                    map.fitBounds(bounds);
                 }
 
                 getWikipediaNearby();
@@ -327,7 +334,7 @@ function AppViewModel() {
 
         $.getJSON(url, function(data) {
             var flickrRequestTimeout = setTimeout(function() {
-                $imageElem.text('failed to get flickr photos in a timely fashion.  :( Bummer, I know.');
+                alertify.alert("failed to get flickr photos in a timely fashion.  :( Bummer, I know.");
             }, 10000);
 
             var photoLimit = 10;
@@ -348,9 +355,9 @@ function AppViewModel() {
                 });
                 clearTimeout(flickrRequestTimeout);
             } else {
-                alert('sadly, there are no images to be found.');
+                alertify.alert("Sadly there are no photos in the area that are public.");
             }
-        }).fail(function(e) { console.log(e); });
+        }).fail(function(e) { console.log(e); alertify.alert("Flickr Data is not available."); });
     }
 
     /**
@@ -371,8 +378,8 @@ function AppViewModel() {
                 lat: 33.3539759,
                 lng: -111.7152599
             },
-            zoom: 13,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
+            zoom: 13
+
 
         });
 
@@ -395,6 +402,7 @@ function AppViewModel() {
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
         self.autocomplete.addListener('place_changed', onPlaceChanged);
+
     }
 
     initMap();
