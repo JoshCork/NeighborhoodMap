@@ -69,23 +69,32 @@
                 <p>Points of interest from your search are displayed here.</p>
                 <div id="listing">
                     <table id="resultsTable">
-                        <tbody id="results"></tbody>
+                        <tbody id="results" data-bind="foreach: placeList">
+                            <tr data-bind="attr: { bgcolor: styleBgColor }" >
+                                <td>
+                                    <img data-bind="attr: { src: markerIcon }" class="placeIcon" classname="placeIcon">
+                                </td>
+                                <td data-bind="text:name"></td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
                 <div style="display: none">
-                    <div id="info-content">
+                    <div id="info-content" data-bind="with: currentPlace()">
                         <table>
                             <tr id="iw-url-row" class="iw_table_row">
-                                <td id="iw-icon" class="iw_table_icon"></td>
+                                <td id="iw-icon" class="iw_table_icon">
+                                    <img data-bind="attr: { src: icon } ">
+                                </td>
                                 <td id="iw-url"></td>
                             </tr>
                             <tr id="iw-address-row" class="iw_table_row">
                                 <td class="iw_attribute_name">Address:</td>
-                                <td id="iw-address"></td>
+                                <td id="iw-address" data-bind="text: address"></td>
                             </tr>
                             <tr id="iw-phone-row" class="iw_table_row">
                                 <td class="iw_attribute_name">Telephone:</td>
-                                <td id="iw-phone"></td>
+                                <td id="iw-phone" data-bind="text: phoneNumber"></td>
                             </tr>
                             <tr id="iw-rating-row" class="iw_table_row">
                                 <td class="iw_attribute_name">Rating:</td>
@@ -93,7 +102,7 @@
                             </tr>
                             <tr id="iw-website-row" class="iw_table_row">
                                 <td class="iw_attribute_name">Website:</td>
-                                <td id="iw-website"></td>
+                                <td id="iw-website" data-bind="text: website"></td>
                             </tr>
                         </table>
                     </div>

@@ -18,22 +18,56 @@ var PlaceModel = function(myPlace, position) {
     this.lng = ko.observable(myPlace.geometry.location.lng());
     this.markerLetter = ko.observable(String.fromCharCode('A'.charCodeAt(0) + self.orderId()));
     this.markerIcon = ko.computed(function() {
-        return self.MARKER_PATH + self.markerLetter() + '.png'; });
+        return self.MARKER_PATH + self.markerLetter() + '.png';
+    });
     this.name = ko.observable(myPlace.name);
-    this.rating = ko.observable(myPlace.rating);
+
     this.styleBgColor = ko.computed(function() {
-        return self.orderId() % 2 === 0 ? '#F0F0F0' : '#FFFFFF'; });
-    this.vicinity = ko.observable(myPlace.vicinity);
-    this.phoneNumber = ko.observable(myPlace.formated_phone_number);
+        return self.orderId() % 2 === 0 ? '#F0F0F0' : '#FFFFFF';
+    });
+
+
     this.icon = ko.observable(myPlace.icon);
     this.marker = ko.observable(new google.maps.Marker({
-                        position: self.location(),
-                        animation: google.maps.Animation.DROP,
-                        icon: self.markerIcon()
-                    }));
+        position: self.location(),
+        animation: google.maps.Animation.DROP,
+        icon: self.markerIcon()
+    }));
 
+    this.marker().placeId = self.placeId();
 
     //todo: need to add onlick function here????
+};
+
+var detailModel = function(placeDetail) {
+    self = this;
+
+    this.hostnameRegexp = new RegExp('^https?://.+?/');
+    this.icon = ko.observable(placeDetail.icon);
+    this.name = ko.observable(placeDetail.name);
+    this.vicinity = ko.observable(placeDetail.vicinity);
+    this.phoneNumber = ko.observable(placeDetail.formatted_phone_number);
+    this.rating = ko.observable(placeDetail.rating);
+    this.address = ko.observable(placeDetail.formatted_address);
+    this.website = ko.computed(function() {
+
+        var theWebsite;
+
+        if (placeDetail.website) {
+
+            theWebsite = self.hostnameRegexp.exec(placeDetail.website)
+
+            if (theWebsite === null) {
+                theWebsite = 'http://' + placeDetail.website + '/';
+            } else {
+                // do nothing
+            }
+
+        } else {
+            theWebsiteebsite = 'none';
+        }
+        return theWebsite;
+    })
 
 
 };
@@ -83,7 +117,6 @@ function AppViewModel() {
 
 
 
-    var hostnameRegexp = new RegExp('^https?://.+?/');
 
     this.autocomplete = ko.observable();
     this.autocompleteBoxPlaceHolder = ko.observable('Search Box');
@@ -91,7 +124,7 @@ function AppViewModel() {
     this.currentArticle = ko.observable();
     this.photoList = ko.observableArray([]);
     this.placeList = ko.observableArray([]);
-    this.markerList = ko.observableArray([]);
+    this.currentPlace = ko.observable();
     //this.baseLocation = new PlaceModel();
 
 
@@ -110,6 +143,23 @@ function AppViewModel() {
         return function() {
             self.placeList()[i].marker().setMap(map);
         };
+    }
+
+    /**
+     * clearMarkers is used to pull the markers off the page when performing a new search and getting
+     * a new search result.
+     * @return {n/a} This funciton does not return any values.
+     */
+    function clearMarkers() {
+        //remove each individual marker from the map using Google Places  setMap marker method.
+        console.log('clearing: ' + self.placeList().length)
+        for (var i = 0; i < self.placeList().length; i++) {
+            console.log('self.placeList()[i]: ' + self.placeList()[i]);
+            if (self.placeList()[i]) {
+                self.placeList()[i].marker().setMap(null);
+            }
+        }
+        self.placeList([]);
     }
 
 
@@ -133,12 +183,34 @@ function AppViewModel() {
     }
 
     /**
+     * Get the place details for a hotel. Show the information in an info window, which is anchored on the
+     * marker for the place that the user selected.
+     * @var {object} marker - Contains the object that was clicked on (this) so that the details can be displayed.
+     * @return {n/a}        - This function does not return a value.
+     */
+    function showInfoWindow(p) {
+
+        var marker = this;
+        places.getDetails({ placeId: marker.placeId },
+            function(place, status) {
+                if (status !== google.maps.places.PlacesServiceStatus.OK) {
+                    return;
+                }
+                self.currentPlace(new detailModel(place));
+                infoWindow.open(map, marker);
+                //buildIWContent(place);
+            });
+    }
+
+    /**
      * Search for places in the selected area from autocomplete.
      * @var {object} theSearch  - This variable holds the configuration for the search to be performed (what map bounds to use
      *                            , what types of palces to search, distance from autocorrect result, etc..).
      * @return {n/a}            - This function does not return anything and instead calls a function that adds results to an array.
      */
     function search(thePlace) {
+
+        console.log('searching');
 
         var theSearch = {
             bounds: map.getBounds(),
@@ -150,44 +222,26 @@ function AppViewModel() {
         places.nearbySearch(theSearch, function(results, status) {
             if (status === google.maps.places.PlacesServiceStatus.OK) {
 
+                console.log('status ok, now calling clearMarkers()');
+
                 // shouldn't have to do this because they should be bound using KO
                 // first clear all markers and results.
                 // clearResults();
-                // clearMarkers();
+                clearMarkers();
 
                 // Create a marker for each place that is found, and
                 // assign a letter of the alphabet to each marker icon.
                 for (var i = 0; i < results.length; i++) {
 
-                    // Done as part of the placeModel
-                    // Use marker animation to drop the icons incrementally on the map.
-                    // markers[i] = new google.maps.Marker({
-                    //     position: results[i].geometry.location,
-                    //     animation: google.maps.Animation.DROP,
-                    //     icon: markerIcon
-                    // });
+
 
                     // If the user clicks a place marker, show the details of that place
                     // in an info window.
-                    self.placeList.push(new PlaceModel(results[i],i));
-                    // self.markerList.push(new google.maps.Marker({
-                    //     position: results[i].geometry.location,
-                    //     animation: google.maps.Animation.DROP,
-                    //     icon: self.placeList()[i].markerIcon()
-                    // })
-                    // );
-
-                    console.log('this markerLetter: ' + self.placeList()[i].markerLetter());
-                    console.log('this markerIcon: ' + self.placeList()[i].markerIcon());
-
+                    self.placeList.push(new PlaceModel(results[i], i));
+                    google.maps.event.addListener(self.placeList()[i].marker(), 'click', showInfoWindow);
                     setTimeout(dropMarker(i), i * 100);
 
 
-
-
-                    // todo: Figure out how to incorporate the below
-                    // google.maps.event.addListener(markers[i], 'click', showInfoWindow);
-                    // setTimeout(dropMarker(i), i * 100);
 
                     // call the addResult funciton to add each result to the result set for displaying on the page.
                     // addResult(results[i], i);
