@@ -34,6 +34,7 @@ var PlaceModel = function(myPlace, position) {
         icon: self.markerIcon()
     }));
 
+    // add a placeId to the marker object for later use in a detail search.
     this.marker().placeId = self.placeId();
 
     //todo: need to add onlick function here????
@@ -67,9 +68,25 @@ var detailModel = function(placeDetail) {
             theWebsiteebsite = 'none';
         }
         return theWebsite;
-    })
+    });
 
+    this.rating = ko.computed(function() {
+        var ratingHtml = '';
 
+        if (placeDetail.rating) {
+            for (var i = 0; i < 5; i++) {
+                if (placeDetail.rating < (i + 0.5)) {
+                    ratingHtml += '&#10025;';
+                } else {
+                    ratingHtml += '&#10029;';
+                }
+            }
+        } else {
+            ratingHtml = 'none';
+        }
+
+        return ratingHtml;
+    });
 };
 
 function Article(data) {
@@ -134,6 +151,12 @@ function AppViewModel() {
     var testLat = 33.30616049999999; // was thePlace.geometry.location.lat()
     var testLon = -111.84125019999999; // was thePlace.geometry.location.lng()
 
+
+    // raise the click event for the marker that is represented when a table row that is clicked
+    self.ahClickIt = function(i) {
+        google.maps.event.trigger(i.marker(), 'click');
+        console.log(i);
+    };
 
     /** Called for each marker in the markers array and places that marker on the map.
     markers are dropped onto the map based on the configuration specified when the marker

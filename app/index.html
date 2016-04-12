@@ -70,7 +70,7 @@
                 <div id="listing">
                     <table id="resultsTable">
                         <tbody id="results" data-bind="foreach: placeList">
-                            <tr data-bind="attr: { bgcolor: styleBgColor }" >
+                            <tr data-bind="click: $root.ahClickIt, attr: { bgcolor: styleBgColor }" >
                                 <td>
                                     <img data-bind="attr: { src: markerIcon }" class="placeIcon" classname="placeIcon">
                                 </td>
@@ -98,7 +98,7 @@
                             </tr>
                             <tr id="iw-rating-row" class="iw_table_row">
                                 <td class="iw_attribute_name">Rating:</td>
-                                <td id="iw-rating"></td>
+                                <td id="iw-rating" data-bind="html: rating"></td>
                             </tr>
                             <tr id="iw-website-row" class="iw_table_row">
                                 <td class="iw_attribute_name">Website:</td>
