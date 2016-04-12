@@ -1,6 +1,6 @@
 'use strict';
 
-var wikiData = []; //[{ "pageid": 21183674, "ns": 0, "title": "Chandler Center for the Arts", "lat": 33.307354, "lon": -111.842317, "dist": 165.7, "primary": "" }, { "pageid": 1265152, "ns": 0, "title": "Chandler High School (Chandler, Arizona)", "lat": 33.308888888889, "lon": -111.84194444444, "dist": 310.2, "primary": "" }, { "pageid": 106644, "ns": 0, "title": "Chandler, Arizona", "lat": 33.3, "lon": -111.83333333333, "dist": 1005.3, "primary": "" }, { "pageid": 48782503, "ns": 0, "title": "A and F Trailer Park, Arizona", "lat": 33.295833333333, "lon": -111.84194444444, "dist": 1150.1, "primary": "" }, { "pageid": 33727026, "ns": 0, "title": "Arizona College Preparatory", "lat": 33.31039, "lon": -111.86176, "dist": 1963.1, "primary": "" }, { "pageid": 24857695, "ns": 0, "title": "Chandler Preparatory Academy", "lat": 33.33398, "lon": -111.85715, "dist": 3428.1, "primary": "" }, { "pageid": 29757538, "ns": 0, "title": "El Dorado High School (Arizona)", "lat": 33.340457, "lon": -111.842966, "dist": 3816.9, "primary": "" }, { "pageid": 6341272, "ns": 0, "title": "Seton Catholic Preparatory High School", "lat": 33.323611111111, "lon": -111.8775, "dist": 3887.3, "primary": "" }, { "pageid": 1955645, "ns": 0, "title": "Arizona Railway Museum", "lat": 33.2697, "lon": -111.8363, "dist": 4080.3, "primary": "" }, { "pageid": 4754408, "ns": 0, "title": "Mesquite High School (Gilbert, Arizona)", "lat": 33.3407, "lon": -111.8259, "dist": 4096.9, "primary": "" }];
+var wikiData = ko.observableArray([]);
 var flickrData = ko.observableArray([]);
 var $imageElem = $('#images');
 
@@ -9,7 +9,6 @@ var PlaceModel = function(myPlace, position) {
     self = this;
 
     this.MARKER_PATH = 'https://maps.gstatic.com/intl/en_us/mapfiles/marker_green';
-
 
     this.placeId = ko.observable(myPlace.place_id);
     this.orderId = ko.observable(position);
@@ -21,12 +20,9 @@ var PlaceModel = function(myPlace, position) {
         return self.MARKER_PATH + self.markerLetter() + '.png';
     });
     this.name = ko.observable(myPlace.name);
-
     this.styleBgColor = ko.computed(function() {
         return self.orderId() % 2 === 0 ? '#F0F0F0' : '#FFFFFF';
     });
-
-
     this.icon = ko.observable(myPlace.icon);
     this.marker = ko.observable(new google.maps.Marker({
         position: self.location(),
@@ -132,9 +128,6 @@ function AppViewModel() {
      */
     var map, places, infoWindow;
 
-
-
-
     this.autocomplete = ko.observable();
     this.autocompleteBoxPlaceHolder = ko.observable('Search Box');
     this.articleList = ko.observableArray([]);
@@ -142,20 +135,11 @@ function AppViewModel() {
     this.photoList = ko.observableArray([]);
     this.placeList = ko.observableArray([]);
     this.currentPlace = ko.observable();
-    //this.baseLocation = new PlaceModel();
-
-
-
-
-    // need to replace this with the place object from google maps.  Baby steps for now.
-    var testLat = 33.30616049999999; // was thePlace.geometry.location.lat()
-    var testLon = -111.84125019999999; // was thePlace.geometry.location.lng()
-
+    this.basePlace = ko.observable();
 
     // raise the click event for the marker that is represented when a table row that is clicked
     self.ahClickIt = function(i) {
         google.maps.event.trigger(i.marker(), 'click');
-        console.log(i);
     };
 
     /** Called for each marker in the markers array and places that marker on the map.
@@ -175,14 +159,14 @@ function AppViewModel() {
      */
     function clearMarkers() {
         //remove each individual marker from the map using Google Places  setMap marker method.
-        console.log('clearing: ' + self.placeList().length)
         for (var i = 0; i < self.placeList().length; i++) {
-            console.log('self.placeList()[i]: ' + self.placeList()[i]);
             if (self.placeList()[i]) {
                 self.placeList()[i].marker().setMap(null);
             }
         }
         self.placeList([]);
+        self.articleList([]);
+        self.photoList([]);
     }
 
 
@@ -198,6 +182,7 @@ function AppViewModel() {
         if (place.geometry) {
             map.panTo(place.geometry.location);
             map.setZoom(15);
+            self.basePlace(new PlaceModel(place));
             search(place);
 
         } else {
@@ -212,7 +197,6 @@ function AppViewModel() {
      * @return {n/a}        - This function does not return a value.
      */
     function showInfoWindow(p) {
-
         var marker = this;
         places.getDetails({ placeId: marker.placeId },
             function(place, status) {
@@ -221,7 +205,6 @@ function AppViewModel() {
                 }
                 self.currentPlace(new detailModel(place));
                 infoWindow.open(map, marker);
-                //buildIWContent(place);
             });
     }
 
@@ -232,9 +215,6 @@ function AppViewModel() {
      * @return {n/a}            - This function does not return anything and instead calls a function that adds results to an array.
      */
     function search(thePlace) {
-
-        console.log('searching');
-
         var theSearch = {
             bounds: map.getBounds(),
             types: ['school', 'store', 'food'],
@@ -244,36 +224,19 @@ function AppViewModel() {
         /** calls the nearby function of places passing into it the config from theSearch and a callback funciton. */
         places.nearbySearch(theSearch, function(results, status) {
             if (status === google.maps.places.PlacesServiceStatus.OK) {
-
-                console.log('status ok, now calling clearMarkers()');
-
-                // shouldn't have to do this because they should be bound using KO
-                // first clear all markers and results.
-                // clearResults();
                 clearMarkers();
-
                 // Create a marker for each place that is found, and
                 // assign a letter of the alphabet to each marker icon.
                 for (var i = 0; i < results.length; i++) {
-
-
-
                     // If the user clicks a place marker, show the details of that place
                     // in an info window.
                     self.placeList.push(new PlaceModel(results[i], i));
                     google.maps.event.addListener(self.placeList()[i].marker(), 'click', showInfoWindow);
                     setTimeout(dropMarker(i), i * 100);
+                };
 
-
-
-                    // call the addResult funciton to add each result to the result set for displaying on the page.
-                    // addResult(results[i], i);
-
-
-                }
-
-                //getWikipediaNearby(thePlace);
-                //getFlickrPhotos(thePlace.geometry.location.lat(), thePlace.geometry.location.lng());
+                getWikipediaNearby();
+                getFlickrPhotos();
 
             }
         });
@@ -302,8 +265,10 @@ function AppViewModel() {
      * @var {string} wpUrl                  - Holds the api URL for Wikipedia's geosearch method.
      *
      */
-    function getWikipediaNearby(thePlace) {
-        var wpUrl = 'http://en.wikipedia.org/w/api.php?action=query&list=geosearch&gsradius=10000&gscoord=' + testLat + '%7C' + testLon + '&format=json';
+    function getWikipediaNearby() {
+
+        var wpUrl = 'http://en.wikipedia.org/w/api.php?action=query&list=geosearch&gsradius=10000&gscoord=' ;
+        wpUrl = wpUrl + self.basePlace().lat() + '%7C' + self.basePlace().lng() + '&format=json';
 
         $.ajax({
             url: wpUrl,
@@ -337,7 +302,10 @@ function AppViewModel() {
      * @var {string}        url             - This holds the URL that is used to pull data from the API, uses all the configuration variables to build the URL.
      * @return {n/a}            - This function does not return any data.
      */
-    function getFlickrPhotos(pLat, pLon) {
+    function getFlickrPhotos() {
+
+        var pLat = self.basePlace().lat();
+        var pLon = self.basePlace().lng();
 
         var flickrBaseUrl = 'https://www.flickr.com/services/rest/?method=flickr.photos.search&format=json';
         var apiKey = '6c50d3c0a8cd35d228fd25d74f2f663c';
@@ -423,14 +391,10 @@ function AppViewModel() {
     };
 
     initMap();
-    getWikipediaNearby('test');
-    getFlickrPhotos(testLat, testLon);
 
 }
 
 function initApp() {
-    console.log('it existis!!!!');
-
     // Activates knockout.js
     ko.applyBindings(new AppViewModel())
 
