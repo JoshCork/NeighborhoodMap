@@ -166,9 +166,9 @@ function AppViewModel() {
                 self.placeList()[i].marker().setMap(null);
             }
         }
-        self.placeList([]);
-        self.articleList([]);
-        self.photoList([]);
+        self.placeList.removeAll();
+        self.articleList.removeAll();
+        self.photoList.removeAll();
     }
 
 
@@ -208,6 +208,11 @@ function AppViewModel() {
                 self.currentPlace(new DetailModel(place));
                 infoWindow.open(map, marker);
             });
+        marker.setAnimation(google.maps.Animation.BOUNCE);
+
+        setTimeout(function() {
+            marker.setAnimation(null)
+        }, 3000);
     }
 
     /**
@@ -284,7 +289,7 @@ function AppViewModel() {
             wikiData.forEach(function(article) {
                 self.articleList.push(new ArticleModel(article));
             });
-            self.currentArticleModel(self.articleList()[0]);
+            self.currentArticle(self.articleList()[0]);
         });
     }
 
