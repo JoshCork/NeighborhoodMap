@@ -36,7 +36,7 @@ var PlaceModel = function(myPlace, position) {
     //todo: need to add onlick function here????
 };
 
-var detailModel = function(placeDetail) {
+var DetailModel = function(placeDetail) {
     self = this;
 
     this.hostnameRegexp = new RegExp('^https?://.+?/');
@@ -85,7 +85,7 @@ var detailModel = function(placeDetail) {
     });
 };
 
-function Article(data) {
+function ArticleModel(data) {
     var self = this;
 
     this.title = ko.observable(data.title);
@@ -95,7 +95,7 @@ function Article(data) {
     });
 };
 
-function Photo(data) {
+function PhotoModel(data) {
     var self = this;
 
     this.farm = ko.observable(data.farm);
@@ -203,7 +203,7 @@ function AppViewModel() {
                 if (status !== google.maps.places.PlacesServiceStatus.OK) {
                     return;
                 }
-                self.currentPlace(new detailModel(place));
+                self.currentPlace(new DetailModel(place));
                 infoWindow.open(map, marker);
             });
     }
@@ -280,9 +280,9 @@ function AppViewModel() {
             }
         }).done(function() {
             wikiData.forEach(function(article) {
-                self.articleList.push(new Article(article));
+                self.articleList.push(new ArticleModel(article));
             });
-            self.currentArticle(self.articleList()[0]);
+            self.currentArticleModel(self.articleList()[0]);
         });
     }
 
@@ -327,7 +327,7 @@ function AppViewModel() {
 
             if (data.photos.photo.length > 0) {
                 $.each(data.photos.photo, function(i, item) {
-                    self.photoList.push(new Photo(item));
+                    self.photoList.push(new PhotoModel(item));
 
                     if (i === photoLimit - 1) {
                         // uses the justifiedGallery library for stylizing the returned images.  Documentaiton can be found here: http://miromannino.github.io/Justified-Gallery/
