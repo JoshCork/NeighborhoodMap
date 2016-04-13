@@ -7,12 +7,13 @@ var wikiData = ko.observableArray([]);
 var $imageElem = $('#images');
 
 
-var PlaceModel = function(myPlace, position, koObject) {
+var PlaceModel = function(myPlace, position, filter) {
+
     self = this;
-    console.log('inside PlaceModel');
 
     this.MARKER_PATH = 'https://maps.gstatic.com/intl/en_us/mapfiles/marker_green';
 
+    this.queryInstance = filter;
     this.placeId = ko.observable(myPlace.place_id);
     this.orderId = ko.observable(position);
     this.location = ko.observable(myPlace.geometry.location);
@@ -32,7 +33,28 @@ var PlaceModel = function(myPlace, position, koObject) {
         animation: google.maps.Animation.DROP,
         icon: self.markerIcon()
     }));
-    // this.show = ko.computed(function(){ return myVM.query(); }) //why won't you work???? Should be myVM.query
+
+    this.show = ko.computed(function() {
+
+        return self.name().toLowerCase().indexOf(self.queryInstance().toLowerCase());
+        // var myString ;
+
+        // myString = self.queryInstance().toLowerCase();
+        // myString = myString +  ' ' + self.name();
+
+        // return  myString;
+
+    } );
+
+    console.log('index of "filter()": ' + self.name().toLowerCase().indexOf(filter().toLowerCase()));
+    console.log('index of "cafe": ' + self.name().toLowerCase().indexOf('cafe'));
+    console.log('filter(): ' + filter());
+    console.log('filter().twoLowerCase(): ' + filter().toLowerCase());
+
+    console.log('self.name(): ' + self.name());
+    console.log('self.name().toLowerCase(): ' + self.name().toLowerCase());
+
+
 
     // this.show = ko.computed(function(){
     //     var found = true;
@@ -40,7 +62,7 @@ var PlaceModel = function(myPlace, position, koObject) {
     //     console.log('filter: ' + filter());
 
     //     if(filter()) {
-    //         self.name().indexOf(filter()) >= 0 ? found = true : found = false;
+    //         self.name().toLowerCase().indexOf(filter().toLowerCase()) >= 0 ? found = true : found = false;
     //     }
 
     //     return found;
@@ -129,7 +151,6 @@ function PhotoModel(data) {
 
 function AppViewModel() {
     var self = this;
-    var myVM = this;
 
     /**
      *  Variables scoped to comboSearch.js and used throughout the script.
@@ -203,9 +224,8 @@ function AppViewModel() {
         if (place.geometry) {
             map.panTo(place.geometry.location);
             map.setZoom(15);
-            self.basePlace(new PlaceModel(place));
+            self.basePlace(new PlaceModel(place, 0, self.query ));
             search();
-            console.log(self.autocompleteBoxPlaceHolder());
 
         } else {
             document.getElementById('autocomplete').placeholder = 'Enter a city';
@@ -245,8 +265,8 @@ function AppViewModel() {
     function search() {
         var theSearch = {
             bounds: map.getBounds(),
-            types: ['school', 'store', 'food'],
-            radius: 500
+            types: ['atm'],
+            radius: '50'
         };
 
         /** calls the nearby function of places passing into it the config from theSearch and a callback funciton. */
@@ -255,10 +275,13 @@ function AppViewModel() {
                 clearMarkers();
                 // Create a marker for each place that is found, and
                 // assign a letter of the alphabet to each marker icon.
+
+
                 for (var i = 0; i < results.length; i++) {
                     // If the user clicks a place marker, show the details of that place
                     // in an info window.
-                    self.placeList.push(new PlaceModel(results[i], i), myVM.query);
+
+                    self.placeList.push(new PlaceModel(results[i], i, self.query));
                     google.maps.event.addListener(self.placeList()[i].marker(), 'click', showInfoWindow);
                     setTimeout(dropMarker(i), i * 100);
                     bounds.extend(results[i].geometry.location);
