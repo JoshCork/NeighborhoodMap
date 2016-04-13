@@ -60,10 +60,7 @@
                 <input id="dataFilter" data-bind="value: query, valueUpdate: 'keyup'" class="controls" type="text">
             </div>
             <div>
-                <h3>Search results:</h3>
-                <ul data-bind="foreach: searchResults">
-                    <li data-bind="text: name"></li>
-                </ul>
+                <p data-bind="text: query"></p>
             </div>
         </div>
         <div class="row">
@@ -87,6 +84,7 @@
                                     <img data-bind="attr: { src: markerIcon }" class="placeIcon" classname="placeIcon">
                                 </td>
                                 <td data-bind="text:name"></td>
+                                <!-- <td data-bind="text:show"></td> -->
                             </tr>
                         </tbody>
                     </table>

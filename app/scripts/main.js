@@ -7,8 +7,9 @@ var wikiData = ko.observableArray([]);
 var $imageElem = $('#images');
 
 
-var PlaceModel = function(myPlace, position) {
+var PlaceModel = function(myPlace, position, koObject) {
     self = this;
+    console.log('inside PlaceModel');
 
     this.MARKER_PATH = 'https://maps.gstatic.com/intl/en_us/mapfiles/marker_green';
 
@@ -31,6 +32,19 @@ var PlaceModel = function(myPlace, position) {
         animation: google.maps.Animation.DROP,
         icon: self.markerIcon()
     }));
+    // this.show = ko.computed(function(){ return myVM.query(); }) //why won't you work???? Should be myVM.query
+
+    // this.show = ko.computed(function(){
+    //     var found = true;
+
+    //     console.log('filter: ' + filter());
+
+    //     if(filter()) {
+    //         self.name().indexOf(filter()) >= 0 ? found = true : found = false;
+    //     }
+
+    //     return found;
+    // })
 
     // add a placeId to the marker object for later use in a detail search.
     this.marker().placeId = self.placeId();
@@ -115,6 +129,7 @@ function PhotoModel(data) {
 
 function AppViewModel() {
     var self = this;
+    var myVM = this;
 
     /**
      *  Variables scoped to comboSearch.js and used throughout the script.
@@ -141,14 +156,6 @@ function AppViewModel() {
     this.basePlace = ko.observable();
     this.query = ko.observable('');
 
-
-
-    this.searchResults = ko.computed(function() {
-        var q = self.query();
-        return self.placeList().filter(function(i) {
-            return i.name().toLowerCase().indexOf(q) >= 0;
-        });
-    });
 
     // raise the click event for the marker that is represented when a table row that is clicked
     self.ahClickIt = function(i) {
@@ -251,7 +258,7 @@ function AppViewModel() {
                 for (var i = 0; i < results.length; i++) {
                     // If the user clicks a place marker, show the details of that place
                     // in an info window.
-                    self.placeList.push(new PlaceModel(results[i], i));
+                    self.placeList.push(new PlaceModel(results[i], i), myVM.query);
                     google.maps.event.addListener(self.placeList()[i].marker(), 'click', showInfoWindow);
                     setTimeout(dropMarker(i), i * 100);
                     bounds.extend(results[i].geometry.location);
