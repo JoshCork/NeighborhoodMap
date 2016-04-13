@@ -9,11 +9,10 @@ var $imageElem = $('#images');
 
 var PlaceModel = function(myPlace, position, filter) {
 
-    self = this;
+    var self = this;
 
     this.MARKER_PATH = 'https://maps.gstatic.com/intl/en_us/mapfiles/marker_green';
 
-    this.queryInstance = filter;
     this.placeId = ko.observable(myPlace.place_id);
     this.orderId = ko.observable(position);
     this.location = ko.observable(myPlace.geometry.location);
@@ -34,39 +33,15 @@ var PlaceModel = function(myPlace, position, filter) {
         icon: self.markerIcon()
     }));
 
-    this.show = ko.computed(function() {
+    this.show = ko.computed(function(){
+        var found = true;
 
-        return self.name().toLowerCase().indexOf(self.queryInstance().toLowerCase());
-        // var myString ;
+        if(filter()) {
+            self.name().toLowerCase().indexOf(filter().toLowerCase()) >= 0 ? found = true : found = false;
+        }
 
-        // myString = self.queryInstance().toLowerCase();
-        // myString = myString +  ' ' + self.name();
-
-        // return  myString;
-
-    } );
-
-    console.log('index of "filter()": ' + self.name().toLowerCase().indexOf(filter().toLowerCase()));
-    console.log('index of "cafe": ' + self.name().toLowerCase().indexOf('cafe'));
-    console.log('filter(): ' + filter());
-    console.log('filter().twoLowerCase(): ' + filter().toLowerCase());
-
-    console.log('self.name(): ' + self.name());
-    console.log('self.name().toLowerCase(): ' + self.name().toLowerCase());
-
-
-
-    // this.show = ko.computed(function(){
-    //     var found = true;
-
-    //     console.log('filter: ' + filter());
-
-    //     if(filter()) {
-    //         self.name().toLowerCase().indexOf(filter().toLowerCase()) >= 0 ? found = true : found = false;
-    //     }
-
-    //     return found;
-    // })
+        return found;
+    })
 
     // add a placeId to the marker object for later use in a detail search.
     this.marker().placeId = self.placeId();
@@ -75,7 +50,7 @@ var PlaceModel = function(myPlace, position, filter) {
 };
 
 var DetailModel = function(placeDetail) {
-    self = this;
+    var self = this;
 
     this.hostnameRegexp = new RegExp('^https?://.+?/');
     this.icon = ko.observable(placeDetail.icon);
@@ -123,7 +98,7 @@ var DetailModel = function(placeDetail) {
     });
 };
 
-function ArticleModel(data) {
+function ArticleModel(data,filter) {
     var self = this;
 
     this.title = ko.observable(data.title);
@@ -131,6 +106,14 @@ function ArticleModel(data) {
     this.link = ko.computed(function() {
         return 'https://en.wikipedia.org/?curid=' + self.pageid();
     });
+    this.show = ko.computed(function(){
+        var found = true;
+        if(filter()) {
+            self.title().toLowerCase().indexOf(filter().toLowerCase()) >= 0 ? found = true : found = false;
+        }
+
+        return found;
+    })
 }
 
 function PhotoModel(data) {
@@ -265,7 +248,7 @@ function AppViewModel() {
     function search() {
         var theSearch = {
             bounds: map.getBounds(),
-            types: ['atm'],
+            types: ['store','school','hospital','food'],
             radius: '50'
         };
 
@@ -333,7 +316,7 @@ function AppViewModel() {
             }
         }).done(function() {
             wikiData.forEach(function(article) {
-                self.articleList.push(new ArticleModel(article));
+                self.articleList.push(new ArticleModel(article,self.query));
             });
             self.currentArticle(self.articleList()[0]);
         });
@@ -439,7 +422,9 @@ function AppViewModel() {
 
         // Create the search box and link it to the UI element.
         var input = document.getElementById('autocomplete');
+        var filter = document.getElementById('dataFilter');
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(filter);
 
         self.autocomplete.addListener('place_changed', onPlaceChanged);
 

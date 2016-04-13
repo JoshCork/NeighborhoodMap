@@ -46,7 +46,7 @@
         <div class="container">
             <div id="locationField">
                 <input id="autocomplete" class="controls" type="text">
-                <!-- <input id="autocomplete" class="controls" type="text" data-bind="placeAutocomplete: FullAddress, route: Street, locality: Suburb, administrative_area_level_1: State" /> -->
+                <input id="dataFilter" data-bind="value: query, valueUpdate: 'keyup'" class="controls" type="text">
             </div>
             <div id="controls">
             </div>
@@ -56,19 +56,11 @@
     <div class="container">
         <!-- Example row of columns -->
         <div class="row">
-            <div class="col-md-12">
-                <input id="dataFilter" data-bind="value: query, valueUpdate: 'keyup'" class="controls" type="text">
-            </div>
-            <div>
-                <p data-bind="text: query"></p>
-            </div>
-        </div>
-        <div class="row">
             <div class="col-md-4 wikipedia-container">
                 <h2 id="wikipedia-header">Wikipedia Info</h2>
                 <p>Search for a neighborhood above and find relevant Wikipedia articles here!</p>
                 <u data-bind="foreach: articleList">
-                    <li>
+                    <li data-bind="visible: show">
                         <a data-bind="attr: {href: link, title: title}, text: title" target="_blank"></a>
                     </li>
                 </u>
@@ -79,12 +71,11 @@
                 <div id="listing">
                     <table id="resultsTable">
                         <tbody id="results" data-bind="foreach: placeList">
-                            <tr data-bind="click: $root.ahClickIt, attr: { bgcolor: styleBgColor }">
+                            <tr data-bind="visible: show, click: $root.ahClickIt, attr: { bgcolor: styleBgColor }">
                                 <td>
                                     <img data-bind="attr: { src: markerIcon }" class="placeIcon" classname="placeIcon">
                                 </td>
                                 <td data-bind="text:name"></td>
-                                <td data-bind="text:show"></td>
                             </tr>
                         </tbody>
                     </table>
