@@ -7,6 +7,28 @@ var wikiData = ko.observableArray([]);
 var $imageElem = $('#images');
 
 
+
+/**
+ * This is my model for holding place objects.  It's used for both the individual google place objects
+ * that are stored in an observable array as well as a separate one off instance to hold the based location
+ * that is considered the neighborhood that is being searched from.
+ * @param   {Object}    myPlace         A google place object.  Used to set all the variables in the model.
+ * @param   {Int}       position        This integer stores the position of the object in the array.
+ * @param   {Object}    filter          A ko.observable that is bound to the fliter text box and is used to filter results.
+ * @var     {Object}    self            Holds a reference to 'this' which is used in functions to avoid the ambiguity of 'this'.
+ * @var     {String}    MARKER_PATH     Holds a constant variable used as a baseline URL path when computing URLs
+ * @var     {String}    placeId         Contains the google place_id variable passed back from Google.
+ * @var     {int}       orderId         Stores the position parameter that was passed into the function.
+ * @var     {Object}    location        Stores the location object from Google Places API
+ * @var     {Float}     lat             Stores the latitude associated with this place.
+ * @var     {Float}     lng             Stores the longitude associated with this place.
+ * @var     {String}    markerLetter    Stores the letter of the alphabet that is tied to this marker (and correlates to the letter in the table of places)
+ * @var     {String}    markerIcon      Computes a URL to the icon to be shown for this marker.
+ * @var     {String}    styleBgColor    Stores the value used for background color on the table of places.
+ * @var     {Object}    icon            Stores the icon from the Google Places API.
+ * @var     {Object}    marker          Stores a marker object that is created for this particular location on the map.
+ * @var     {Boolean}   show            Stores a true / false value derived by text typed into the filter input box.
+ */
 var PlaceModel = function(myPlace, position, filter) {
 
     var self = this;
@@ -19,34 +41,42 @@ var PlaceModel = function(myPlace, position, filter) {
     this.lat = ko.observable(myPlace.geometry.location.lat());
     this.lng = ko.observable(myPlace.geometry.location.lng());
     this.markerLetter = ko.observable(String.fromCharCode('A'.charCodeAt(0) + self.orderId()));
-    this.markerIcon = ko.computed(function() {
-        return self.MARKER_PATH + self.markerLetter() + '.png';
-    });
+    this.markerIcon = ko.computed(function() {return self.MARKER_PATH + self.markerLetter() + '.png'; });
     this.name = ko.observable(myPlace.name);
-    this.styleBgColor = ko.computed(function() {
-        return self.orderId() % 2 === 0 ? '#F0F0F0' : '#FFFFFF';
-    });
+    this.styleBgColor = ko.computed(function() { return self.orderId() % 2 === 0 ? '#F0F0F0' : '#FFFFFF'; });
     this.icon = ko.observable(myPlace.icon);
     this.marker = ko.observable(new google.maps.Marker({
-        position: self.location(),
-        animation: google.maps.Animation.DROP,
-        icon: self.markerIcon()
-    }));
-
-    this.show = ko.computed(function(){
-        var found = true;
-
-        if(filter()) {
-           found = self.name().toLowerCase().indexOf(filter().toLowerCase()) >= 0 ? true : false;
-        }
-
-        return found;
-    });
-    // add a placeId to the marker object for later use in a detail search.
+                    position: self.location(),
+                    animation: google.maps.Animation.DROP,
+                    icon: self.markerIcon()
+                }));
     this.marker().placeId = self.placeId();
-
+    this.show = ko.computed(function(){
+                    var found = true;
+                    if(filter()) {
+                       found = self.name().toLowerCase().indexOf(filter().toLowerCase()) >= 0 ? true : false;
+                    }
+                    return found;
+                });
 };
 
+
+/**
+ * This is my model for holding a detail for a specific place.  It's used when a particular location
+ * on the map is clicked on.  It holds the data that is passed back from Google when doing using their
+ * details API.
+ * @param {Object} placeDetail Holds the Google Place Detail Object that gets passed back.
+ *
+ * @var {Object} self               A reference to 'this', used in later calculations and functions to reduce ambiguity.
+ * @var {Object} hostnameRegexp     Holds a RegExp object used for parsing the URL returned from Google
+ * @var {String} icon               Holds the icon returned from Google
+ * @var {String} name               Holds the name of this specific locaiton
+ * @var {Object} vicinity           Holds Google's vicinity object
+ * @var {String} phoneNumber        Holds Google's formatted phone number
+ * @var {Int}    rating             Holds the average rating assigned to this specific place.
+ * @var {String} address            Holds this places formatted address.
+ * @var {String} website            A computed variable that holds the website URL.
+ */
 var DetailModel = function(placeDetail) {
     var self = this;
 
@@ -55,7 +85,6 @@ var DetailModel = function(placeDetail) {
     this.name = ko.observable(placeDetail.name);
     this.vicinity = ko.observable(placeDetail.vicinity);
     this.phoneNumber = ko.observable(placeDetail.formatted_phone_number);
-    this.rating = ko.observable(placeDetail.rating);
     this.address = ko.observable(placeDetail.formatted_address);
     this.website = ko.computed(function() {
 
