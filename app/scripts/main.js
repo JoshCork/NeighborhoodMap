@@ -156,6 +156,17 @@ function ArticleModel(data, filter) {
     });
 }
 
+/**
+ * This is my model for holding Flickr Photos.
+ * @param   {Object} data               holds the data returned from Flickr, a flickr photo object.
+ * @var     {String} farm               holds the farm that the photo is stored on.
+ * @var     {String} server             holds the server that the photo is stored on.
+ * @var     {String} id                 holds the id of this photo
+ * @var     {String} secret             holds the 'secret' for this photo
+ * @var     {String} owner              holds the id of the owner for this photo
+ * @var     {String} url                computes the url for the photo itself.
+ * @var     {String} attributionLink    computes the url to link back to the original post for attribution of the photo.
+ */
 function PhotoModel(data) {
     var self = this;
 
@@ -172,6 +183,9 @@ function PhotoModel(data) {
     });
 }
 
+/**
+ * This is the main ViewModel that is used for my App.  It's job is to interact with both the view (HTML) and the Models (above).
+ */
 function AppViewModel() {
     var self = this;
 
@@ -180,7 +194,7 @@ function AppViewModel() {
      *  @var {object} map               - This variable holds the google map object that is used for mapping.
      *  @var {object} places            - This variable holds the places service that is tied to map.  Used when searching for a place.
      *  @var {object} infoWindow        - This variable holds the google maps info window object this is used to display marker info on the map.
-     *  @var {array}  markers           - This variable is an array that holds marker objects returned from the google maps search.
+     *  @var {array}  placeList           - This variable is an array that holds marker objects returned from the google maps search.
      *  @var {object} autocomplete      - This variable holds the google maps autocomplete object allowing search results to be passed back to the text box as they are typing.
      *  @var {string} MARKER_PATH       - This variable holds the marker image base url path that we use to display on the map for each place result that is returned from google maps.
      *  @var {object} hostnameRegexp    - This variable holds a Regular expression object used to determine the base URL for places that are returned and displaying the short portion of them.
