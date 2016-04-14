@@ -22,7 +22,8 @@ var $imageElem = $('#images');
  * @var     {Object}    location        Stores the location object from Google Places API
  * @var     {Float}     lat             Stores the latitude associated with this place.
  * @var     {Float}     lng             Stores the longitude associated with this place.
- * @var     {String}    markerLetter    Stores the letter of the alphabet that is tied to this marker (and correlates to the letter in the table of places)
+ * @var     {String}    markerLetter    Stores the letter of the alphabet that is tied to this marker (and correlates to the
+ *                                      letter in the table of places)
  * @var     {String}    markerIcon      Computes a URL to the icon to be shown for this marker.
  * @var     {String}    styleBgColor    Stores the value used for background color on the table of places.
  * @var     {Object}    icon            Stores the icon from the Google Places API.
@@ -67,7 +68,8 @@ var PlaceModel = function(myPlace, position, filter) {
  * details API.
  * @param {Object} placeDetail Holds the Google Place Detail Object that gets passed back.
  *
- * @var {Object} self               A reference to 'this', used in later calculations and functions to reduce ambiguity.
+ * @var {Object} self               A reference to 'this', used in later calculations and functions to
+ *                                  reduce ambiguity.
  * @var {Object} hostnameRegexp     Holds a RegExp object used for parsing the URL returned from Google
  * @var {String} icon               Holds the icon returned from Google
  * @var {String} name               Holds the name of this specific locaiton
@@ -125,6 +127,17 @@ var DetailModel = function(placeDetail) {
     });
 };
 
+/**
+ * This is my Model for holding Wikipedia Articles
+ * @param   {Object}    data   Holds a Wikipedia API provided object containing an article.
+ * @param   {String}    filter Holds  KO.Observable object that is bound to a filter input box and holds a
+ *                             string value used as a filter for individual objects.
+ * @var     {String}    title  Holds the title for this article returned from Wikipedia.
+ * @var     {String}    pageid Holds the unique ID for this article from Google.
+ * @var     {String}    link   Holds a URL to the article on Wikipedia.
+ * @var     {Boolean}   show   Computes a true / false value derived by text typed into the filter input box.
+ *
+ */
 function ArticleModel(data, filter) {
     var self = this;
 
