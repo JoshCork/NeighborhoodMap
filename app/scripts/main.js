@@ -37,16 +37,14 @@ var PlaceModel = function(myPlace, position, filter) {
         var found = true;
 
         if(filter()) {
-            self.name().toLowerCase().indexOf(filter().toLowerCase()) >= 0 ? found = true : found = false;
+           found = self.name().toLowerCase().indexOf(filter().toLowerCase()) >= 0 ? true : false;
         }
 
         return found;
-    })
-
+    });
     // add a placeId to the marker object for later use in a detail search.
     this.marker().placeId = self.placeId();
 
-    //todo: need to add onlick function here????
 };
 
 var DetailModel = function(placeDetail) {
@@ -98,7 +96,7 @@ var DetailModel = function(placeDetail) {
     });
 };
 
-function ArticleModel(data,filter) {
+function ArticleModel(data, filter) {
     var self = this;
 
     this.title = ko.observable(data.title);
@@ -109,11 +107,11 @@ function ArticleModel(data,filter) {
     this.show = ko.computed(function(){
         var found = true;
         if(filter()) {
-            self.title().toLowerCase().indexOf(filter().toLowerCase()) >= 0 ? found = true : found = false;
+            found = self.title().toLowerCase().indexOf(filter().toLowerCase()) >= 0 ? true : false;
         }
 
         return found;
-    })
+    });
 }
 
 function PhotoModel(data) {
@@ -235,7 +233,7 @@ function AppViewModel() {
         marker.setAnimation(google.maps.Animation.BOUNCE);
 
         setTimeout(function() {
-            marker.setAnimation(null)
+            marker.setAnimation(null);
         }, 3000);
     }
 
@@ -248,7 +246,7 @@ function AppViewModel() {
     function search() {
         var theSearch = {
             bounds: map.getBounds(),
-            types: ['store','school','hospital','food'],
+            types: ['store', 'school', 'hospital', 'food'],
             radius: '50'
         };
 
@@ -316,7 +314,7 @@ function AppViewModel() {
             }
         }).done(function() {
             wikiData.forEach(function(article) {
-                self.articleList.push(new ArticleModel(article,self.query));
+                self.articleList.push(new ArticleModel(article, self.query));
             });
             self.currentArticle(self.articleList()[0]);
         });
@@ -356,7 +354,7 @@ function AppViewModel() {
 
         $.getJSON(url, function(data) {
             var flickrRequestTimeout = setTimeout(function() {
-                alertify.alert("failed to get flickr photos in a timely fashion.  :( Bummer, I know.");
+                alertify.alert('We failed to get flickr photos in a timely fashion.  :( Bummer, I know.');
             }, 10000);
 
             var photoLimit = 10;
@@ -377,10 +375,10 @@ function AppViewModel() {
                 });
                 clearTimeout(flickrRequestTimeout);
             } else {
-                alertify.alert("Sadly there are no photos in the area that are public.");
+                alertify.alert('Sadly there are no photos in the area that are public.');
             }
         }).fail(function(e) { console.log(e);
-            alertify.alert("Flickr Data is not available."); });
+            alertify.alert('Flickr Data is not available.'); });
     }
 
     /**
