@@ -10,8 +10,6 @@
 var wikiData = ko.observableArray([]);
 var $imageElem = $('#images');
 
-
-
 /**
  * This is my model for holding place objects.  It's used for both the individual google place objects
  * that are stored in an observable array as well as a separate one off instance to hold the based location
@@ -34,7 +32,7 @@ var $imageElem = $('#images');
  * @var     {Object}    marker          Stores a marker object that is created for this particular location on the map.
  * @var     {Boolean}   show            Stores a true / false value derived by text typed into the filter input box.
  */
-var PlaceModel = function(myPlace, position, filter) {
+function PlaceModel(myPlace, position, filter) {
 
     var self = this;
 
@@ -68,8 +66,7 @@ var PlaceModel = function(myPlace, position, filter) {
         self.marker().setVisible(found);
         return found;
     });
-};
-
+}
 
 /**
  * This is my model for holding a detail for a specific place.  It's used when a particular location
@@ -88,7 +85,7 @@ var PlaceModel = function(myPlace, position, filter) {
  * @var {String} address            Holds this places formatted address.
  * @var {String} website            A computed variable that holds the website URL.
  */
-var DetailModel = function(placeDetail) {
+function DetailModel(placeDetail) {
     var self = this;
 
     this.hostnameRegexp = new RegExp('^https?://.+?/');
@@ -134,7 +131,7 @@ var DetailModel = function(placeDetail) {
 
         return ratingHtml;
     });
-};
+}
 
 /**
  * This is my Model for holding Wikipedia Articles
@@ -242,11 +239,6 @@ function AppViewModel() {
 
     this.searchFrom = ko.observable();
 
-    self.autocompleteMobile.addListener('place_changed', function() { self.searchFrom('mobile'); });
-    self.autocompleteMobile.addListener('place_changed', onPlaceChanged);
-
-
-
     // raise the click event for the marker that is represented when a table row that is clicked
     self.ahClickIt = function(i) {
         google.maps.event.trigger(i.marker(), 'click');
@@ -293,7 +285,7 @@ function AppViewModel() {
 
         console.log('self.searchFrom(): ' + self.searchFrom());
 
-        var place
+        var place;
 
         if (self.searchFrom() === 'mobile') {
             place = self.autocompleteMobile.getPlace();
@@ -352,7 +344,6 @@ function AppViewModel() {
             radius: '50'
         };
 
-
         /**
          * Calls Google's nearby function of places passing into it the config from theSearch and a callback funciton.
          * This callback function adds places to the placeList, adds a showInfoWindow function to each result. It then
@@ -382,8 +373,6 @@ function AppViewModel() {
 
             }
         });
-
-
     }
 
 
@@ -527,19 +516,19 @@ function AppViewModel() {
 
         self.autocomplete.addListener('place_changed', function() { self.searchFrom('desktop'); });
         self.autocomplete.addListener('place_changed', onPlaceChanged);
+        self.autocompleteMobile.addListener('place_changed', function() { self.searchFrom('mobile'); });
+        self.autocompleteMobile.addListener('place_changed', onPlaceChanged);
 
     }
 
     // kicks off the creation of the map.
     initMap();
-
 }
+
 
 // kicks off the whole applicaiton by calling the knockoutJS applyBindings function
 // for the AppViewModel.
 function initApp() {
     // Activates knockout.js
     ko.applyBindings(new AppViewModel());
-
-
 }
