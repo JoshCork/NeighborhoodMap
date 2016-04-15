@@ -17,6 +17,11 @@ This folder contains all my projects that I worked on as I worked through the cl
 # Daily Notes
 Below is a list of daily notes I kept while working through the project and classroom material.  Enjoy!
 
+## 4/14/2016
+### 5pm
+Trying to mess around with autocomplete and come up with a way to make the ui
+responsive.  Need to set line 227 back to a getElementById for the autocomplete box.  
+
 ## 4/11/2016 
 ### 10pm
 Everything has been convered over to KnockoutJS. 

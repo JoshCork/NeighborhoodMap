@@ -3,6 +3,10 @@
 /*eslint no-alert: 1*/
 'use strict';
 
+/**
+ * @var {object} wikiElem         - This variable holds a an array of wikipedia objects.
+ * @var {object} $imageElem        - This variable holds a jquery object reference to a specific set of HTML on the page set aside for photos.
+ */
 var wikiData = ko.observableArray([]);
 var $imageElem = $('#images');
 
@@ -42,23 +46,28 @@ var PlaceModel = function(myPlace, position, filter) {
     this.lat = ko.observable(myPlace.geometry.location.lat());
     this.lng = ko.observable(myPlace.geometry.location.lng());
     this.markerLetter = ko.observable(String.fromCharCode('A'.charCodeAt(0) + self.orderId()));
-    this.markerIcon = ko.computed(function() {return self.MARKER_PATH + self.markerLetter() + '.png'; });
+    this.markerIcon = ko.computed(function() {
+        return self.MARKER_PATH + self.markerLetter() + '.png';
+    });
     this.name = ko.observable(myPlace.name);
-    this.styleBgColor = ko.computed(function() { return self.orderId() % 2 === 0 ? '#F0F0F0' : '#FFFFFF'; });
+    this.styleBgColor = ko.computed(function() {
+        return self.orderId() % 2 === 0 ? '#F0F0F0' : '#FFFFFF';
+    });
     this.icon = ko.observable(myPlace.icon);
     this.marker = ko.observable(new google.maps.Marker({
-                    position: self.location(),
-                    animation: google.maps.Animation.DROP,
-                    icon: self.markerIcon()
-                }));
+        position: self.location(),
+        animation: google.maps.Animation.DROP,
+        icon: self.markerIcon()
+    }));
     this.marker().placeId = self.placeId();
-    this.show = ko.computed(function(){
-                    var found = true;
-                    if(filter()) {
-                       found = self.name().toLowerCase().indexOf(filter().toLowerCase()) >= 0 ? true : false;
-                    }
-                    return found;
-                });
+    this.show = ko.computed(function() {
+        var found = true;
+        if (filter()) {
+            found = self.name().toLowerCase().indexOf(filter().toLowerCase()) >= 0 ? true : false;
+        }
+        self.marker().setVisible(found);
+        return found;
+    });
 };
 
 
@@ -146,9 +155,9 @@ function ArticleModel(data, filter) {
     this.link = ko.computed(function() {
         return 'https://en.wikipedia.org/?curid=' + self.pageid();
     });
-    this.show = ko.computed(function(){
+    this.show = ko.computed(function() {
         var found = true;
-        if(filter()) {
+        if (filter()) {
             found = self.title().toLowerCase().indexOf(filter().toLowerCase()) >= 0 ? true : false;
         }
 
@@ -191,28 +200,51 @@ function AppViewModel() {
 
     /**
      *  Variables scoped to comboSearch.js and used throughout the script.
-     *  @var {object} map               - This variable holds the google map object that is used for mapping.
-     *  @var {object} places            - This variable holds the places service that is tied to map.  Used when searching for a place.
-     *  @var {object} infoWindow        - This variable holds the google maps info window object this is used to display marker info on the map.
-     *  @var {array}  placeList           - This variable is an array that holds marker objects returned from the google maps search.
-     *  @var {object} autocomplete      - This variable holds the google maps autocomplete object allowing search results to be passed back to the text box as they are typing.
-     *  @var {string} MARKER_PATH       - This variable holds the marker image base url path that we use to display on the map for each place result that is returned from google maps.
-     *  @var {object} hostnameRegexp    - This variable holds a Regular expression object used to determine the base URL for places that are returned and displaying the short portion of them.
-     *  @var {object} $wikiElem         - This variable holds a jquery object reference to a specific set of HTML on the page set aside for wiki data.
-     *  @var {object} $imageElem        - This variable holds a jquery object reference to a specific set of HTML on the page set aside for photos.
+     *  @var {object}   map                    - This variable holds the google map object that is used for mapping.
+     *  @var {object}   places                 - This variable holds the places service that is tied to map.  Used when searching for a place.
+     *  @var {object}   infoWindow             - This variable holds the google maps info window object this is used to display
+     *                                           marker info on the map.
+     *  @var {array}    placeList              - This variable is an array that holds marker objects returned from the google maps search.
+     *  @var {object}   autocomplete           - This variable holds the google maps autocomplete object allowing search results to be passed
+     *                                           back to the text box as they are typing.
+     *  @var {object}   autocompleteMobile     - This variable holds the google maps autocomplete object allowing search results to be passed
+     *                                           back to the text box as they are typing. This version is used when they are on a mobile device
+     *                                           because I show/hide based on which size screen they have.
+     *  @var {array}    articleList            - This variable holds an array of wikipedia objects
+     *  @var {array}    photoList              - This variable holds an array of Flickr photo objects
+     *  @var {array}    placeList              - This variable holds an array of Google Place objects
+     *  @var {object}   currentPlace           - This variable holds the current place that is clicked on.
+     *  @var {object}   basePlace              - This variable holds a single Google Place ojbect that is used as a basline to search from (for
+     *                                           Wiki Articles & Flickr Photos)
+     *  @var {string}   query                  - This variable holds text that is used as to filter the results set down.
+     *  @var {object}   bounds                 - This variable holds a google places LatLngBounds object that is used to make sure all markers are
+     *                                           visible.
+     *  @var {string}   searchFrom             - This variable holds the control that was used to search the map.  This lets me provide
+     *                                           two different controls for searching the map. One for a desktop form factor and one for a mobile
+     *                                           form factor.  This way the layout looks good regards of what device you are on.
+
      */
     var map, places, infoWindow;
 
-    var bounds = new google.maps.LatLngBounds();
-
-    this.autocompleteBoxPlaceHolder = ko.observable();
+    this.bounds = new google.maps.LatLngBounds();
     this.articleList = ko.observableArray([]);
-    this.currentArticle = ko.observable();
     this.photoList = ko.observableArray([]);
     this.placeList = ko.observableArray([]);
     this.currentPlace = ko.observable();
     this.basePlace = ko.observable();
     this.query = ko.observable('');
+
+    this.searchBox = ko.observable(document.getElementById('autocomplete'));
+    this.searchBoxMobile = ko.observable(document.getElementById('autocompleteMobile'));
+
+    this.autocomplete = new google.maps.places.Autocomplete(self.searchBox(), {});
+    this.autocompleteMobile = new google.maps.places.Autocomplete(self.searchBoxMobile(), {});
+
+    this.searchFrom = ko.observable();
+
+    self.autocompleteMobile.addListener('place_changed', function() { self.searchFrom('mobile'); });
+    self.autocompleteMobile.addListener('place_changed', onPlaceChanged);
+
 
 
     // raise the click event for the marker that is represented when a table row that is clicked
@@ -245,33 +277,47 @@ function AppViewModel() {
         self.placeList.removeAll();
         self.articleList.removeAll();
         self.photoList.removeAll();
-        bounds = new google.maps.LatLngBounds();
+        self.bounds = new google.maps.LatLngBounds();
+        self.searchFrom('');
     }
 
 
     /**
      * onPlaceChanged()
      * When the user selects a city, get the place details for the city and zoom the map in on the city. Then calls
-     * the rest of the functions used to
+     * the rest of the functions used to populate data of interest to the end user.
      * @var {object} place      - Holds the results coming back from the autocomplete get place function.
      * @return {n/a}            - This function does not return anything.
      */
     function onPlaceChanged() {
-        var place = self.autocomplete.getPlace();
+
+        console.log('self.searchFrom(): ' + self.searchFrom());
+
+        var place
+
+        if (self.searchFrom() === 'mobile') {
+            place = self.autocompleteMobile.getPlace();
+        } else {
+            place = self.autocomplete.getPlace();
+        }
+
+
+        console.log(place);
+
         if (place.geometry) {
             map.panTo(place.geometry.location);
             map.setZoom(15);
-            self.basePlace(new PlaceModel(place, 0, self.query ));
+            self.basePlace(new PlaceModel(place, 0, self.query));
             search();
 
         } else {
-            document.getElementById('autocomplete').placeholder = 'Enter a city';
+            document.getElementById('autocomplete').placeholder = 'Enter a location';
         }
 
     }
 
     /**
-     * Get the place details for a hotel. Show the information in an info window, which is anchored on the
+     * Get the place details for a place. Show the information in an info window, which is anchored on the
      * marker for the place that the user selected.
      * @var {object} marker - Contains the object that was clicked on (this) so that the details can be displayed.
      * @return {n/a}        - This function does not return a value.
@@ -306,23 +352,29 @@ function AppViewModel() {
             radius: '50'
         };
 
-        /** calls the nearby function of places passing into it the config from theSearch and a callback funciton. */
+
+        /**
+         * Calls Google's nearby function of places passing into it the config from theSearch and a callback funciton.
+         * This callback function adds places to the placeList, adds a showInfoWindow function to each result. It then
+         * calls the drop marker function and iterates through those markers sequentially so they don't all drop at once.
+         * After that it extends the bounds of the map and fits the map to those extended bounds so that all the markers are
+         * visible on the map when it loads.  Finally it calls the Flickr and Wikipedia get functions to start pulling in
+         * data from those sources to be displayed in the view.
+         *
+         * @param  {object} theSearch   Holds the search parameters passed off to the  nearBy search API.
+         * @param  {string} status      Holds the status of the query run against Google's API (Okay vs. Error)
+         * @return {object} results     Holds the results of the Google Nearby Search wich are then iterated through to create
+         *                              a new place object in the place list for each of the results.
+         */
         places.nearbySearch(theSearch, function(results, status) {
             if (status === google.maps.places.PlacesServiceStatus.OK) {
                 clearMarkers();
-                // Create a marker for each place that is found, and
-                // assign a letter of the alphabet to each marker icon.
-
-
                 for (var i = 0; i < results.length; i++) {
-                    // If the user clicks a place marker, show the details of that place
-                    // in an info window.
-
                     self.placeList.push(new PlaceModel(results[i], i, self.query));
                     google.maps.event.addListener(self.placeList()[i].marker(), 'click', showInfoWindow);
                     setTimeout(dropMarker(i), i * 100);
-                    bounds.extend(results[i].geometry.location);
-                    map.fitBounds(bounds);
+                    self.bounds.extend(results[i].geometry.location);
+                    map.fitBounds(self.bounds);
                 }
 
                 getWikipediaNearby();
@@ -336,23 +388,16 @@ function AppViewModel() {
 
 
     /**
-     * [renderFlikrPhotos description]
-     * @param   {object}    data        - Holds the data object returned from the Flickr API.
-     * @var     {string}    src         - This holds the string that is built to be a link in the html back to the source flickr image.
-     * @var     {int}       photoLimit  - Holds the number of photos to render.
-     * @return  {n/a}                   - This function does not return anything.
-     */
-    //Need to move this documentation to getFlikrPhotos
-
-
-    /**
-     * This function takes a place from the Google Places API and builds the on page HTML to
-     * display Wikipedia informaotin (links to articles) based on the lat/lon of that place.
-     * @param  {object} thePlace            - A google places object that is used to pull the lat/lon data
-     *                                        and send that to Wikipedia's API and return articles that are geo tagged
-     *                                        in close proximity to the location that was searched.
+     * This function uses the basePlace observable place (set earlier) from the Google Places API and
+     * gets Wikipedia articles using their geosearch method to find articles that are tagged with geo
+     * locations near the basePlace.  The articles that are returned are placed in the articles array
+     * (articleList) as new Article objects.  That array of wiki articles are bound to the view and
+     * are displayed as they are populated.
+     *
      * @return {n/a}                        - This function does not return any values directly.
-     * @var {string} wpUrl                  - Holds the api URL for Wikipedia's geosearch method.
+     * @var {string} wpUrl                  - Holds the api URL for Wikipedia's geosearch method. This
+     *                                        url is constructed using the lat and lon from the basePlace
+     *                                        PlaceModel object.
      *
      */
     function getWikipediaNearby() {
@@ -372,13 +417,16 @@ function AppViewModel() {
             wikiData.forEach(function(article) {
                 self.articleList.push(new ArticleModel(article, self.query));
             });
-            self.currentArticle(self.articleList()[0]);
+
         });
     }
 
     /**
      * This function is used to make a call to Flickr to pull back the photos that are geotagged
-     * in an area near the area where the user searched the google map.
+     * in an area near the area where the user searched the google map.  The Flickr Object that is
+     * returned is then iterated through and a new PhotoModel object is added to the photoList
+     * observable array for each of the photos in that Flickr Object.
+     *
      * @param   {float}     pLat     - The latitude of the place that was searched.
      * @param   {float}     pLon     - The longitude of the place that was searched.
      * @var     {string}    flickrBaseUrl - This holds the base url used to consume the flickr API
@@ -401,7 +449,7 @@ function AppViewModel() {
         var apiKey = '6c50d3c0a8cd35d228fd25d74f2f663c';
         var safe_search = 1;
         var sort = 'interestingness-desc';
-        var radius = 10;
+        var radius = 1;
         var radius_units = 'mi';
         var content_type = 1;
         var perPage = 10;
@@ -433,13 +481,18 @@ function AppViewModel() {
             } else {
                 alertify.alert('Sadly there are no photos in the area that are public.');
             }
-        }).fail(function(e) { console.log(e);
-            alertify.alert('Flickr Data is not available.'); });
+        }).fail(function(e) {
+            console.log(e);
+            alertify.alert('Flickr Data is not available.');
+        });
     }
 
     /**
-     * initMap() is the callback function used by Google Maps to kick off the whoe app. It centers the map on Gilbert, AZ
-     * because that's where I live and I wanted to.  In the future I could pull the location from the browser if I wanted to.
+     * initMap() is the callback function used by Google Maps to kick off the mapping portion of the app.
+     * It centers the map on Gilbert, AZ to start because that's where I live and I wanted to.  In the future
+     * I could pull the location from the browser if I wanted to.  This function also places the search input
+     * boxes on the map using Google's ControlPosition method.
+     *
      * @var     {object} map            - Contains a google map object.
      * @var     {object} infoWindow     - Contains the HTML that is used to render information about the drop pins.
      * @var     {object} autocomplete   - a google places autocomplete object used to assist the user in picking a location on the map
@@ -448,16 +501,12 @@ function AppViewModel() {
      * @return  {n/a}                   - This function does not return anything.
      */
     function initMap() {
-
-
         map = new google.maps.Map(document.getElementById('map'), {
             center: {
                 lat: 33.3539759,
                 lng: -111.7152599
             },
             zoom: 13
-
-
         });
 
         infoWindow = new google.maps.InfoWindow({
@@ -466,28 +515,28 @@ function AppViewModel() {
 
         // Create the autocomplete object and associate it with the UI input control.
         // Restrict the search to the default country, and to place type 'cities'.
-        self.autocomplete = new google.maps.places.Autocomplete(
-            /** @type {!HTMLInputElement} */
-            (
-                document.getElementById('autocomplete')), {
 
-            });
         places = new google.maps.places.PlacesService(map);
 
         // Create the search box and link it to the UI element.
         var input = document.getElementById('autocomplete');
         var filter = document.getElementById('dataFilter');
+
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(filter);
 
+        self.autocomplete.addListener('place_changed', function() { self.searchFrom('desktop'); });
         self.autocomplete.addListener('place_changed', onPlaceChanged);
 
     }
 
+    // kicks off the creation of the map.
     initMap();
 
 }
 
+// kicks off the whole applicaiton by calling the knockoutJS applyBindings function
+// for the AppViewModel.
 function initApp() {
     // Activates knockout.js
     ko.applyBindings(new AppViewModel());
