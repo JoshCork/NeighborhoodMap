@@ -283,8 +283,6 @@ function AppViewModel() {
      */
     function onPlaceChanged() {
 
-        console.log('self.searchFrom(): ' + self.searchFrom());
-
         var place;
 
         if (self.searchFrom() === 'mobile') {
@@ -293,15 +291,11 @@ function AppViewModel() {
             place = self.autocomplete.getPlace();
         }
 
-
-        console.log(place);
-
         if (place.geometry) {
             map.panTo(place.geometry.location);
             map.setZoom(15);
             self.basePlace(new PlaceModel(place, 0, self.query));
             search();
-
         } else {
             document.getElementById('autocomplete').placeholder = 'Enter a location';
         }
@@ -522,7 +516,13 @@ function AppViewModel() {
     }
 
     // kicks off the creation of the map.
-    initMap();
+
+    if (typeof google === 'undefined' || google === null) {
+        alertify.alert('Shucks!  Something went terribly terribly wrong with the googles. The universe just wants you to try harder.  Please refesh the page a few times. :)');
+    } else {
+
+        initMap();
+    }
 }
 
 
@@ -531,4 +531,9 @@ function AppViewModel() {
 function initApp() {
     // Activates knockout.js
     ko.applyBindings(new AppViewModel());
+}
+
+
+function googleError() {
+    alertify.alert('Shucks!  Something went terribly terribly wrong with the googles. The universe just wants you to try harder.  Please refesh the page a few times. :)');
 }
