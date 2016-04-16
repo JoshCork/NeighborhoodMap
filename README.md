@@ -1,9 +1,22 @@
 # NeighborhoodMap
-You will develop a single-page application featuring a map of your neighborhood or a neighborhood you would like to visit. You will then add additional functionality to this application, including: map markers to identify popular locations or places you’d like to visit, a search function to easily discover these locations, and a listview to support simple browsing of all locations. You will then research and implement third-party APIs that provide additional information about each of these locations (such as StreetView images, Wikipedia articles, Yelp reviews, etc).
+I have develop a single-page application featuring a map that allows you to search any neighborhood. The application will drop markers on the map for points of interest around that area that you searched.  Additionally it pulls in articles from Wikipedia and photos from Flickr that were taken near that place.  To get started with the app just type in a location you would like to search into the input box at the top of the map.  You can start by typing in "Scottsdale, AZ" for instance and you will be given a list of locations as you type.  Select one of those locations and you'll be off and running!
 
 # Launching this project and the repo structure
-## Launching the project.
+## Launching the completed project.
 All of my code has been deployed using gulp over to a github pages page.  You can find the working project here: http://joshcork.github.io/NeighborhoodMap/
+
+## Installing this project to run locally
+You will need to have the following installed:
+    1. git
+    2. node/npm --> I installed via homebrew following the instructions here: http://blog.teamtreehouse.com/install-node-js-npm-mac
+    3. bower --> terminal npm install bower
+
+Once you have cloned the repo down to your local machine.  Navigate to that folder in terminal and run 'bower install' to have bower install all the libraries that this project is dependent on.
+
+Once you've done all that you should be able to open the index page in your browser to run it locally.  
+
+Optionally gulp is configured for this project so that you can run a 'gulp serve' command from terminal to have the project open up in your browser.
+
 
 ## Repo structure
 I used the Yeoman framework for scaffolding this project.  It was tons of fun trying to figure out how to get GULP to work and how the esLint library worked.  I was able to set up some automatic deployment to my github.io page.
