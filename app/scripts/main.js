@@ -386,7 +386,7 @@ function AppViewModel() {
     function getWikipediaNearby() {
         var WIKI_ISSUE_ALERT = 'Oh, snap! Something has gone wrong with Wikipedia!  Did you remember to make your donation? Yeah, me either.... maybe just refresh the page? Specifically I captured this error: ';
 
-        var wikiRequestTimeout = setTimeout(function() { alertify.alert(WIKI_ISSUE_ALERT) }, 8000);
+        var wikiRequestTimeout = setTimeout(function() { alertify.alert(WIKI_ISSUE_ALERT); }, 8000);
 
         var wpUrl = 'http://en.wikipedia.org/w/api.php?action=query&list=geosearch&gsradius=10000&gscoord=';
         wpUrl = wpUrl + self.basePlace().lat() + '%7C' + self.basePlace().lng() + '&format=json';
@@ -402,9 +402,9 @@ function AppViewModel() {
             error: function(jqXHR, exception) {
                 if (jqXHR.status === 0) {
                     alertify.alert(WIKI_ISSUE_ALERT + 'Not connect.n Verify Network.');
-                } else if (jqXHR.status == 404) {
+                } else if (jqXHR.status === 404) {
                     alertify.alert(WIKI_ISSUE_ALERT + 'Requested page not found. [404]');
-                } else if (jqXHR.status == 500) {
+                } else if (jqXHR.status === 500) {
                     alertify.alert(WIKI_ISSUE_ALERT + 'Internal Server Error [500].');
                 } else if (exception === 'parsererror') {
                     alertify.alert(WIKI_ISSUE_ALERT + 'Requested JSON parse failed.');
