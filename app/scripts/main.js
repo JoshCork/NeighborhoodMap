@@ -384,6 +384,9 @@ function AppViewModel() {
      *
      */
     function getWikipediaNearby() {
+        var WIKI_ISSUE_ALERT = 'Oh, snap! Something has gone wrong with Wikipedia!  Did you remember to make your donation? Yeah, me either.... maybe just refresh the page? Specifically I captured this error: ';
+
+        var wikiRequestTimeout = setTimeout(function() { alertify.alert(WIKI_ISSUE_ALERT) }, 8000);
 
         var wpUrl = 'http://en.wikipedia.org/w/api.php?action=query&list=geosearch&gsradius=10000&gscoord=';
         wpUrl = wpUrl + self.basePlace().lat() + '%7C' + self.basePlace().lng() + '&format=json';
@@ -392,9 +395,26 @@ function AppViewModel() {
             url: wpUrl,
             crossDomain: true,
             dataType: 'jsonp',
-            success: function(data) { wikiData = data.query.geosearch; },
-            error: function(e) {
-                console.log('I am the error: ' + e);
+            success: function(data) {
+                wikiData = data.query.geosearch;
+                clearTimeout(wikiRequestTimeout);
+            },
+            error: function(jqXHR, exception) {
+                if (jqXHR.status === 0) {
+                    alertify.alert(WIKI_ISSUE_ALERT + 'Not connect.n Verify Network.');
+                } else if (jqXHR.status == 404) {
+                    alertify.alert(WIKI_ISSUE_ALERT + 'Requested page not found. [404]');
+                } else if (jqXHR.status == 500) {
+                    alertify.alert(WIKI_ISSUE_ALERT + 'Internal Server Error [500].');
+                } else if (exception === 'parsererror') {
+                    alertify.alert(WIKI_ISSUE_ALERT + 'Requested JSON parse failed.');
+                } else if (exception === 'timeout') {
+                    alertify.alert(WIKI_ISSUE_ALERT + 'Time out error.');
+                } else if (exception === 'abort') {
+                    alertify.alert(WIKI_ISSUE_ALERT + 'Ajax request aborted.');
+                } else {
+                    alertify.alert(WIKI_ISSUE_ALERT + 'Uncaught Error.n' + jqXHR.responseText);
+                }
             }
         }).done(function() {
             wikiData.forEach(function(article) {
@@ -465,8 +485,7 @@ function AppViewModel() {
                 alertify.alert('Sadly there are no photos in the area that are public.');
             }
         }).fail(function(e) {
-            console.log(e);
-            alertify.alert('Flickr Data is not available.');
+            alertify.alert('Flickr Data is not available. Specifically I captured the following error: ' + e);
         });
     }
 
